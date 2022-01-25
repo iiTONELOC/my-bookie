@@ -17,7 +17,6 @@ MONGO_URI = f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}/{MONG
 
 def get_conn_str():
     """Returns the connection string for the MongoDB database."""
-    # for testing purposes should be is False, it gets set above
     if PRODUCTION != 'production':
         return f"mongodb://localhost:27017/"
     else:
