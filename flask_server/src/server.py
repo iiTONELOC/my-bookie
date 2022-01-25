@@ -26,6 +26,7 @@ class Server:
         self.app.config['ENV'] = env_  # uses the NODE_ENV environment variable
 
     def run(self):
+        # routes here
         Router(self.app)
         self.app.run(host=self.host, debug=True)
 
