@@ -2,13 +2,14 @@ from flask import jsonify, request, make_response
 from ..controllers import user_model_controller as mc
 
 
-def user_get(email=None):
+def user_get(param=None):
     """User get route."""
-    if email is None:
-        data = mc.get_all_users()
-        return jsonify(data)
-    print('User Get Route')
-
+    if param is None:  # 'api/users'
+        return jsonify(mc.get_all_users())
+    else:  # 'api/users/param'
+        print('GET USER REQUEST:', param)
+        # check
+        print(int('p'))
     return jsonify(data='user_get')
 
 

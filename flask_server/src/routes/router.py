@@ -21,3 +21,7 @@ def app_router(app):
     def api(name):
         return api_route_controller(name)
 
+    @app.route('/api/users/<name>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+    def api_1(name):
+        return api_route_controller('users', name)
+

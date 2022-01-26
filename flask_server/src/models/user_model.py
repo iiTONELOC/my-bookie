@@ -1,6 +1,9 @@
 import bcrypt
 from mongoengine import *
 
+# FIXME
+#  Add email validation
+
 
 def hash_password(password):
     password = password.encode("utf-8")
