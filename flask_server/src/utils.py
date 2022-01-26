@@ -26,3 +26,4 @@ def validate_email(email):
             return False
     else:
         return None
+

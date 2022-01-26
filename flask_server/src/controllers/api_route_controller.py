@@ -8,7 +8,7 @@ def api_controller(name, param=None):
             'POST': lambda: user_routes.user_post(),
             'PUT': lambda: user_routes.user_put(param),
             'GET': lambda: user_routes.user_get(param),
-            'DELETE': lambda: user_routes.user_delete()
+            'DELETE': lambda: user_routes.user_delete(param)
         },
     }
     if name in routes:

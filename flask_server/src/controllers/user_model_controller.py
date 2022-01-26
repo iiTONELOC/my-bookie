@@ -4,6 +4,19 @@ from ..models.user_model import User, hash_password, check_password
 from ..utils import validate_email
 m_db = db()
 
+# utility functions
+# ------------------
+
+
+def filter_by_param(data, key, value):
+    """Returns a list of users that match the key, value pair"""
+
+    filtered_item = None
+    for item in data:
+        if item[key] == value:
+            filtered_item = item
+    return filtered_item
+
 
 def check_if_user_exists(username, email):
     """Checks if a user exists in the database.
@@ -32,15 +45,33 @@ def package_basic_user_data(search_result):
         data.append(d)
     return data
 
+# ---------------------
+# END UTILITY FUNCTIONS
 
-def get_all_users():
+# CRUD Functions
+# --------------
+
+
+def get_all_users():  # (R)ead - get all users
+    """Retrieves all the user documents from the DB with password removed"""
     users = m_db['users'].find()
     # for user in users:
     #     m_db['users'].delete_one(user)
     return package_basic_user_data(users)
 
 
-def create_user(data=None):
+def get_one_user(email=None, _id=None):  # (R)ead - get a single user
+    """Retrieves a single user document from the DB with password removed"""
+    all_users = get_all_users()
+    if email is not None:
+        return filter_by_param(all_users, 'email', email)
+    elif _id is not None:
+        return filter_by_param(all_users, '_id', _id)
+    else:
+        return None
+
+
+def create_user(data=None):  # (C)reate - create a new user
     """Create a new user in the database"""
     if data is None:
         return None
@@ -81,15 +112,13 @@ def create_user(data=None):
                         username=data['username'],
                         email=data['email'],
                         password=hash_password(data['password']))
-                    # varable to check if the user was saved
+                    # variable to check if the user was saved
                     did_save = m_db['users'].insert_one(user.to_mongo())
             else:
                 return {'error': {'message': 'User already exists!'}}
         except AttributeError as e:
-            print('ATTRIBUTE ERROR: ', e)
             return {'error': {'message': f'{e}'}}
         except KeyError as e:
-            print('KEY ERROR: ', e)
             return {'error': {'message': f'{e} is required!'}}
         if did_save.inserted_id is None:
             return {'error': {'message': 'Unable to create user'}}

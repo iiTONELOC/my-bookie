@@ -7,8 +7,8 @@ def user_get(param=None):
     if param is None:  # 'api/users'
         return jsonify(mc.get_all_users())
     else:  # 'api/users/param'
-        print('GET USER REQUEST:', param)
-        return jsonify({'route': 'user_get', 'param': param})
+        # get user by _id
+        return jsonify(mc.get_one_user(_id=param))
 
 
 def user_post():
@@ -31,7 +31,10 @@ def user_put(param=None):
         return jsonify({'route': 'user_put', 'param': param})
 
 
-def user_delete():
+def user_delete(param=None):
     """User delete route."""
-    print('User Delete Route')
-    return jsonify(data='user_delete')
+    if param is None:  # 'api/users/param'
+        return
+    else:  # 'api/users/param'
+        print('DELETE USER REQUEST:', param)
+        return jsonify({'route': 'user_delete', 'param': param})
