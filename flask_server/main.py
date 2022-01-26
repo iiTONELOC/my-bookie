@@ -1,4 +1,4 @@
-from src import Server
+from src.server import Server
 server = Server()
 
 if __name__ == '__main__':

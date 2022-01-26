@@ -1,24 +1,8 @@
 from flask import jsonify, make_response, request
+from ..controllers import api_route_controller
 
 
-def api_controller(name):
-    routes = {
-        'users': {
-            'PUT': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'}),
-            'GET': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'}),
-            'POST': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'}),
-            'DELETE': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'})
-        },
-    }
-
-    if name in routes:
-        func = routes[name][request.method]
-        return func()
-    else:
-        return make_response(jsonify({'message': 'Not Found'}), 404)
-
-
-def Router(app):
+def app_router(app):
     # FIXME: This is a temporary solution to get the app to work.
     #   When we have the front end, we can remove this.
     #   this route should return the index.html file from the
@@ -35,6 +19,5 @@ def Router(app):
 
     @app.route('/api/<name>', methods=['GET', 'POST', 'PUT', 'DELETE'])
     def api(name):
-        return api_controller(name)
+        return api_route_controller(name)
 
-    # add switch controller here for availale
