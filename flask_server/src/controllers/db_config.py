@@ -1,6 +1,6 @@
 import os
-import pymongo
 
+import pymongo
 
 PRODUCTION = os.getenv('NODE_ENV') == 'production'
 #  UN-DEPLOYED ONLY, remove for production

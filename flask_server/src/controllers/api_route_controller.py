@@ -1,14 +1,15 @@
 from flask import jsonify, make_response, request
+from ..routes import user_routes
 
 
 def api_controller(name):
 
     routes = {
         'users': {
-            'PUT': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'}),
-            'GET': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'}),
-            'POST': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'}),
-            'DELETE': lambda: jsonify({'message': f'This is the {name} route for the {request.method} method.'})
+            'PUT': lambda: user_routes.user_put(),
+            'GET': lambda: user_routes.user_get(),
+            'POST': lambda: user_routes.user_post(),
+            'DELETE': lambda: user_routes.user_delete()
         },
     }
 

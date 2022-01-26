@@ -1,7 +1,10 @@
 import os
+
 from flask import Flask
-from .utils import get_environment
+
 from .routes.router import app_router
+from .utils import get_environment
+
 # The environment is set to 'development' by default.
 env_ = get_environment()
 # Folders are set to work with a React.js project inside of a 'client' folder.
