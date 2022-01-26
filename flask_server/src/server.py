@@ -9,6 +9,7 @@ static = os.path.normpath(static)
 
 class Server:
     """A class to represent a Flask Server.
+
     Parameters
     ----------
     static_url_path : str (path)
@@ -27,6 +28,7 @@ class Server:
         default: environment variable PORT || 5000
     host : str
         default: '0.0.0.0'
+
     Methods
     -------
     run():

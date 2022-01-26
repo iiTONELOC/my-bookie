@@ -3,16 +3,14 @@ from ..routes import user_routes
 
 
 def api_controller(name, param=None):
-
     routes = {
         'users': {
-            'PUT': lambda: user_routes.user_put(),
-            'GET': lambda: user_routes.user_get(param),
             'POST': lambda: user_routes.user_post(),
+            'PUT': lambda: user_routes.user_put(param),
+            'GET': lambda: user_routes.user_get(param),
             'DELETE': lambda: user_routes.user_delete()
         },
     }
-
     if name in routes:
         func = routes[name][request.method]
         return func()

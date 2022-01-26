@@ -1,10 +1,14 @@
+import email
 from .db_config import db
 from ..models.user_model import User, hash_password, check_password
-
+from ..utils import validate_email
 m_db = db()
 
 
 def check_if_user_exists(username, email):
+    """Checks if a user exists in the database.
+    return: True if the user exists, False if not.
+    """
     user_list = get_all_users()
     matches = []
     for user in user_list:
@@ -17,10 +21,9 @@ def check_if_user_exists(username, email):
 
 
 def package_basic_user_data(search_result):
-    """Returns user data without the password"""
+    """Returns user data without the password in a serializable format"""
     data = []
     for item in search_result:
-        # ensures the data types are compatible with the front end
         d = {
             '_id': str(item['_id']),
             'email': str(item['email']),
@@ -38,27 +41,48 @@ def get_all_users():
 
 
 def create_user(data=None):
-    """Create a new user in the database."""
+    """Create a new user in the database"""
     if data is None:
         return None
     else:
         user = None
         did_save = None
         try:
+            # Make sure the user doesn't already exist
+            # usernames and emails are unique
             does_exist = check_if_user_exists(data['username'], data['email'])
             if does_exist is False:
-                if len(data['password']) >= 8:
-                    user = User(
-                        username=data['username'],
-                        email=data['email'],
-                        password=hash_password(data['password']))
-                    did_save = m_db['users'].insert_one(user.to_mongo())
-                else:
+                # check email
+                is_valid_email = validate_email(data['email'])
+                if is_valid_email is False:
+                    return {
+                        'error': {
+                            'message': 'email is not in valid format!'
+                        }
+                    }
+                elif is_valid_email is None:
+                    return {
+                        'error': {
+                            'message': 'email is required!'
+                        }
+                    }
+                elif is_valid_email:
+                    pass
+                # check password length
+                if len(data['password']) < 8:
                     return {
                         'error': {
                             'message': 'passwords must be at least 8 characters!'
                         }
                     }
+                else:
+                    # create the user
+                    user = User(
+                        username=data['username'],
+                        email=data['email'],
+                        password=hash_password(data['password']))
+                    # varable to check if the user was saved
+                    did_save = m_db['users'].insert_one(user.to_mongo())
             else:
                 return {'error': {'message': 'User already exists!'}}
         except AttributeError as e:
