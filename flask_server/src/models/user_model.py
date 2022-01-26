@@ -15,11 +15,10 @@ def check_password(password, hashed_password):
 class User(Document):
     email = StringField(required=True)
     username = StringField(required=True, max_length=50)
-    password = StringField(required=True)
+    password = StringField(required=True, min_length=8)
 
     def get_info(self):
         return {
             'email': self.email,
             'username': self.username,
         }
-
