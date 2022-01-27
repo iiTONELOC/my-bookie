@@ -44,10 +44,6 @@ def package_basic_user_data(search_result):
         data.append(d)
     return data
 
-
-# END UTILITY FUNCTIONS
-# ---------------------
-
 # CRUD Functions
 # --------------
 
