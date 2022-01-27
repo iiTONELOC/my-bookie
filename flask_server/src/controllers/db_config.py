@@ -1,11 +1,11 @@
 import os
-import pymongo
 
+import pymongo
 
 PRODUCTION = os.getenv('NODE_ENV') == 'production'
 #  UN-DEPLOYED ONLY, remove for production
 if PRODUCTION is False or PRODUCTION == 'development':
-    from env import *
+    from .env import *
     mongo_production_server_settings()
 
 MONGO_DB = os.getenv('MONGO_DB')

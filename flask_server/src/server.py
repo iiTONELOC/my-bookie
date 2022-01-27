@@ -1,34 +1,62 @@
 import os
 from flask import Flask
 from .utils import get_environment
-from src.routes import Router
-# The environment is set to 'development' by default.
+
 env_ = get_environment()
-# Folders are set to work with a React.js project inside of a 'client' folder.
-# The %PUBLIC_URL% in react only works when the project has been built
 static = '../../client/build'
 static = os.path.normpath(static)
 
 
 class Server:
+    """A class to represent a Flask Server.
+
+    Parameters
+    ----------
+    static_url_path : str (path)
+        default: ''
+    static_folder : str (path)
+        relative location to the static folder
+        default: os.path.normpath('../../client/build')
+    template_folder : str (path)
+        relative location to the html template folder  
+        (we are using React.js and not Flask's template engine)
+        default: os.path.normpath('../../client/build')
+    route_controller : Function
+        default: None
+        Provides a wrapper for a custom route controller.
+    port : int
+        default: environment variable PORT || 5000
+    host : str
+        default: '0.0.0.0'
+
+    Methods
+    -------
+    run():
+        Starts the server with desired settings
+    """
+
     def __init__(
             self,
             static_url_path='',
             static_folder=static,
             template_folder=static,
+            route_controller=None,
+            port=os.getenv('PORT') or 5000,
             host='0.0.0.0'):
         self.app = Flask(
             __name__, static_url_path=static_url_path,
             static_folder=static_folder,
             template_folder=template_folder
         )
+        self.port = port
         self.host = host
+        self.route_controller = route_controller
         self.app.config['ENV'] = env_  # uses the NODE_ENV environment variable
 
     def run(self):
-        # routes here
-        Router(self.app)
-        self.app.run(host=self.host, debug=True)
-
-    def get_app(self):
-        return self.app
+        if self.route_controller is not None:
+            try:
+                self.route_controller(self.app)
+            except Exception as e:
+                print(f'Error loading route_controller: {e}')
+        self.app.run(host=self.host, port=self.port, debug=True)
