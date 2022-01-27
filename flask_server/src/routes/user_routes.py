@@ -1,3 +1,4 @@
+from ..auth.auth import Auth
 from flask import jsonify, request, make_response
 from ..controllers import user_model_controller as mc
 
@@ -20,7 +21,10 @@ def user_get(param=None):
         return jsonify(mc.get_all_users())
     else:  # 'api/users/param'
         # get user by _id
-        return jsonify(mc.get_one_user(_id=param))
+        if Auth.is_authorized(request, param):
+            return jsonify(mc.get_one_user(_id=param))
+        else:
+            return make_response(jsonify(Auth.unauthorized_msg(None)), 401)
 
 
 def user_post():
@@ -34,14 +38,17 @@ def user_put(param=None):
     if param is None:  # 'api/users/param'
         return
     else:  # 'api/users/param'
-        data = mc.edit_user({
-            "param": param,
-            "body": request.json
-        })
-        if data is not None:
-            return handle_response(data)
+        if Auth.is_authorized(request, param):
+            data = mc.edit_user({
+                "param": param,
+                "body": request.json
+            })
+            if data is not None:
+                return handle_response(data)
+            else:
+                return None
         else:
-            return None
+            return make_response(jsonify(Auth.unauthorized_msg(None)), 401)
 
 
 def user_delete(param=None):
@@ -49,5 +56,8 @@ def user_delete(param=None):
     if param is None:  # 'api/users/param'
         return
     else:  # 'api/users/param'
-        data = mc.delete_user(param)
-        return handle_response(data)
+        if Auth.is_authorized(request, param):
+            data = mc.delete_user(param)
+            return handle_response(data)
+        else:
+            return make_response(jsonify(Auth.unauthorized_msg(None)), 401)

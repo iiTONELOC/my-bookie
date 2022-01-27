@@ -1,7 +1,9 @@
 from .db_config import db
+from ..auth.auth import Auth
 from bson.objectid import ObjectId
-from ..models.user_model import User, hash_password, check_password
 from ..utils import validate_email
+from ..models.user_model import User, hash_password, check_password
+
 m_db = db()
 
 # utility functions
@@ -43,6 +45,7 @@ def package_basic_user_data(search_result):
         }
         data.append(d)
     return data
+
 
 # CRUD Functions
 # --------------
@@ -135,59 +138,50 @@ def edit_user(data=None):  # (U)update - edit a new user
         if user_by_id is not None:
             # request body
             body = data['body']
-            # FIXME
-            #  CHECK THE REQUESTING USERS CREDENTIALS
-            #  Ensure it is the user trying to edit their own account
-            authorized = True
-
-            if authorized is True:
-                # CONTINUE
-                # verify the params passed are valid
-                if 'email' in body:
-                    # validate the email
-                    if validate_email(body['email']) is False:
+            # verify the params passed are valid
+            if 'email' in body:
+                # validate the email
+                if validate_email(body['email']) is False:
+                    return {
+                        'error': {
+                            'message': 'email is not in valid format!'
+                        }
+                    }
+                else:
+                    # check uniqueness
+                    if filter_by_param(
+                            user_list, 'email', body['email']) is not None:
                         return {
                             'error': {
-                                'message': 'email is not in valid format!'
+                                'message': 'email already exists!'
                             }
-                        }
-                    else:
-                        # check uniqueness
-                        if filter_by_param(
-                                user_list, 'email', body['email']) is not None:
-                            return {
-                                'error': {
-                                    'message': 'email already exists!'
-                                }
-                            }
-                        else:
-                            # continue
-                            pass
-                if 'username' in body:
-                    # verify the username is unique
-                    if filter_by_param(
-                            user_list, 'username', body['username']) is not None:
-                        return {
-                            'error': {'message': 'user already exists!'}
                         }
                     else:
                         # continue
                         pass
+            if 'username' in body:
+                # verify the username is unique
+                if filter_by_param(
+                        user_list, 'username', body['username']) is not None:
+                    return {
+                        'error': {'message': 'user already exists!'}
+                    }
+                else:
+                    # continue
+                    pass
                 # update the user with the cleaned data
                 # find the user by id and update
-                cleaned = {k: v for k, v in body.items() if k in [
-                    'username', 'email']}
-                updated_user = m_db['users'].find_one_and_update(
-                    {'_id': (ObjectId(data['param']))}, {'$set': cleaned}
-                )
-                if updated_user is not None:
-                    return cleaned
-                else:
-                    return {'error': {'message': 'Unable to update user'}}
+            cleaned = {k: v for k, v in body.items() if k in [
+                'username', 'email']}
+            updated_user = m_db['users'].find_one_and_update(
+                {'_id': (ObjectId(data['param']))}, {'$set': cleaned}
+            )
+            if updated_user is not None:
+                return cleaned
             else:
-                return {'unauthorized': {'message': 'You are not authorized!'}}
+                return {'error': {'message': 'Unable to update user'}}
         else:
-            return None
+            return {'unauthorized': {'message': 'You are not authorized!'}}
 
 
 def delete_user(data=None):  # (D)elete - delete a user
@@ -195,17 +189,55 @@ def delete_user(data=None):  # (D)elete - delete a user
     if data is None:
         return None
     else:
-        # FIXME
-        #  CHECK THE REQUESTING USERS CREDENTIALS
-        is_authorized = True
-
-        if is_authorized is True:
-            del_user = m_db['users'].find_one_and_delete(
-                {'_id': ObjectId(data)}
-            )
-            if del_user is not None:
-                print('DEL USER')
-                print(del_user)
-                return {'message': 'User deleted!'}
+        del_user = m_db['users'].find_one_and_delete(
+            {'_id': ObjectId(data)}
+        )
+        if del_user is not None:
+            return {'message': 'User deleted!'}
         else:
             return None
+
+# LOGIN/LOGOUT handlers
+# ----------------------
+
+
+def user_login(res, data=None):
+    """Login a user. returns a JWT token"""
+    err_msg = res(({'error': {'message': 'Incorrect credentials'}}), 400)
+    if data is None:
+        return err_msg
+    else:
+        # get user data
+        user_req = {}
+        if data.get('username'):
+            user_req['username'] = data['username']
+        if data.get('email'):
+            user_req['email'] = data['email']
+        try:
+            user_req['password'] = data['password']
+        except KeyError:
+            return err_msg
+
+        # variable to hold found user
+        match_user = None
+        if 'username' in user_req:
+            match_user = m_db['users'].find_one(
+                {'username': user_req['username']})
+        if 'email' in user_req:
+            match_user = m_db['users'].find_one(
+                {'email': user_req['email']})
+        # if match
+        if match_user is not None:
+            # user found now check password
+            if check_password(user_req['password'], match_user['password']):
+                # generate a token for the user
+                token = Auth.sign_token(
+                    match_user['email'],
+                    match_user['username'],
+                    str(match_user['_id'])
+                )
+                return {'token': token}
+            else:
+                return err_msg
+        else:
+            return err_msg

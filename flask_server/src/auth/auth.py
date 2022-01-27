@@ -1,9 +1,7 @@
 import os
 import jwt
-import time
+from distutils.log import error
 from datetime import datetime, timedelta
-secret_key = ""
-encoding = ''
 
 
 def set_expiration():
@@ -12,42 +10,70 @@ def set_expiration():
 
 def get_secret_keys():
     if os.getenv('NODE_ENV') != 'production':
-        from env import set_auth_env
+        from .env import set_auth_env
         set_auth_env()
-        global secret_key, encoding
-        secret_key = os.getenv('SECRET_KEY')
-        encoding = os.getenv('TOKEN_ENCODING')
+    return {
+        'SECRET_KEY': os.getenv('SECRET_KEY'),
+        'TOKEN_ENCODING': os.getenv('TOKEN_ENCODING'),
+    }
 
 
 class Auth:
     @staticmethod
     def sign_token(username, email, _id):
-        get_secret_keys()
+        keys = get_secret_keys()
         payload = {
             'exp': set_expiration(),
             'username': username,
             'email': email,
             '_id': _id
         }
-        return jwt.encode(payload, secret_key, algorithm='HS256')
+        return jwt.encode(payload, keys['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def get_token(req):
+        if req.headers.get('Authorization'):
+            try:
+                return req.headers.get('Authorization').split(' ')[1].strip()
+            except error as e:
+                return {'error': {'message': f'Invalid token: {e}'}}
+
+        else:
+            return None
 
     @staticmethod
     def decode_token(token):
-        get_secret_keys()
-
+        keys = get_secret_keys()
         try:
-            return jwt.decode(token, secret_key, algorithms=['HS256'])
+            return jwt.decode(token, keys['SECRET_KEY'], algorithms=['HS256'])
         except jwt.exceptions.ExpiredSignatureError:
-            return {'Expired Auth': {
-                'message': 'Session expired. Please log in again.'
-            }}
+            return Auth.unauthorized_msg(None)
+        except jwt.exceptions.InvalidSignatureError:
+            # FIXME
+            # create a tracker that tracks the ip and number of failed attempts
+            # if the number of failed attempts is greater than 5, block the ip
+            return Auth.unauthorized_msg('Invalid token. Please log in again.')
+        except error as e:
+            return Auth.unauthorized_msg(e)
 
+    @staticmethod
+    def is_authorized(req, id):
+        """Checks the id of the auth token against the id of the user"""
+        token = Auth.get_token(req)
+        if token is not None:
+            decoded = Auth.decode_token(token)
+            if 'Unauthorized' in decoded:
+                return False
+            else:
+                if decoded['_id'] == id:
+                    return True
+                else:
+                    return False
+        else:
+            return False
 
-def auth_test(num):
-    print(f'Please wait the test is starting and will take {num} seconds')
-    token = Auth.sign_token('test', 'test@test.com', '13')
-    time.sleep(num)
-    print(Auth.decode_token(token))
-
-
-auth_test(10)
+    @staticmethod
+    def unauthorized_msg(msg):
+        return {'Unauthorized': {
+            'message': f'{msg or "Session expired. Please log in again."}'
+        }}

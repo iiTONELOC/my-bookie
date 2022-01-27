@@ -11,6 +11,7 @@ def api_controller(name, param=None):
             'DELETE': lambda: user_routes.user_delete(param)
         },
     }
+
     if name in routes:
         func = routes[name][request.method]
         return func()
