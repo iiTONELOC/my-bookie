@@ -2,6 +2,15 @@ from flask import jsonify, request, make_response
 from ..controllers import user_model_controller as mc
 
 
+def handle_response(data):
+    if 'error' in data:
+        return make_response(jsonify(error=data['error']), 400)
+    elif 'unauthorized' in data:
+        return make_response(jsonify(unauthorized=data['unauthorized']), 401)
+    else:
+        return jsonify(data)
+
+
 def user_get(param=None):
     """User get route."""
     if param is None:  # 'api/users'
@@ -13,13 +22,8 @@ def user_get(param=None):
 
 def user_post():
     """User post route."""
-    print('User Post Route')
-    # try to create a user here
     data = mc.create_user(request.json)
-    if 'error' in data:
-        return make_response(jsonify(error=data['error']), 400)
-    else:
-        return jsonify(data=data)
+    handle_response(data)
 
 
 def user_put(param=None):
@@ -27,8 +31,15 @@ def user_put(param=None):
     if param is None:  # 'api/users/param'
         return
     else:  # 'api/users/param'
-        print('UPDATE USER REQUEST:', param)
-        return jsonify({'route': 'user_put', 'param': param})
+        d = request.json
+        data = mc.edit_user({
+            "param": param,
+            "body": d
+        })
+        if data is not None:
+            return handle_response(data)
+        else:
+            return None
 
 
 def user_delete(param=None):

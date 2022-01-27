@@ -1,5 +1,5 @@
-import email
 from .db_config import db
+from bson.objectid import ObjectId
 from ..models.user_model import User, hash_password, check_password
 from ..utils import validate_email
 m_db = db()
@@ -9,8 +9,7 @@ m_db = db()
 
 
 def filter_by_param(data, key, value):
-    """Returns a list of users that match the key, value pair"""
-
+    """Returns an item that matches the key, value pair"""
     filtered_item = None
     for item in data:
         if item[key] == value:
@@ -45,8 +44,9 @@ def package_basic_user_data(search_result):
         data.append(d)
     return data
 
-# ---------------------
+
 # END UTILITY FUNCTIONS
+# ---------------------
 
 # CRUD Functions
 # --------------
@@ -60,7 +60,7 @@ def get_all_users():  # (R)ead - get all users
     return package_basic_user_data(users)
 
 
-def get_one_user(email=None, _id=None):  # (R)ead - get a single user
+def get_one_user(email=None, _id=None):  # (R)ead - get a single user by _id or email
     """Retrieves a single user document from the DB with password removed"""
     all_users = get_all_users()
     if email is not None:
@@ -124,3 +124,78 @@ def create_user(data=None):  # (C)reate - create a new user
             return {'error': {'message': 'Unable to create user'}}
         else:
             return user.get_info()
+
+
+def edit_user(data=None):  # (U)update - edit a new user
+    """Edit a new user in the database"""
+    if data is None:
+        return None
+    else:
+        # check if the user exists
+        # get_all_users does not return the password
+        # to edit the password use the edit_user_password function
+        user_list = get_all_users()
+        user_by_id = filter_by_param(user_list, '_id', data['param'])
+        if user_by_id is not None:
+            print(data)
+            # we can edit the user we have a match
+            body = data['body']
+            # filter out the fields we don't want to edit
+            # a user can only edit their username and email
+            cleaned = {k: v for k, v in body.items() if k in [
+                'username', 'email']}
+
+            # FIXME
+            #  CHECK THE REQUESTING USERS CREDENTIALS
+            #  Ensure it is the user trying to edit their own account
+            authorized = True
+
+            if authorized is True:
+                # CONTINUE
+                # verify the params passed are valid
+                if 'email' in body:
+                    # validate the email
+                    is_valid_email = validate_email(body['email'])
+                    if is_valid_email is False:
+                        return {
+                            'error': {
+                                'message': 'email is not in valid format!'
+                            }
+                        }
+                    else:
+                        # check uniqueness
+                        is_unique = filter_by_param(
+                            user_list, 'email', body['email'])
+                        if is_unique is not None:
+                            return {
+                                'error': {
+                                    'message': 'email already exists!'
+                                }
+                            }
+                        else:
+                            # continue
+                            pass
+                if 'username' in body:
+                    # verify the username is unique
+                    is_unique = filter_by_param(
+                        user_list, 'username', body['username'])
+                    if is_unique is not None:
+                        return {
+                            'error': {'message': 'user already exists!'}
+                        }
+                    else:
+                        # continue
+                        pass
+                # update the user with the cleaned data
+                # find the user by id and update
+                updated_user = m_db['users'].find_one_and_update(
+                    {'_id': (ObjectId(data['param']))}, {'$set': cleaned}
+                )
+                if updated_user is not None:
+                    return cleaned
+                else:
+                    return {'error': {'message': 'Unable to update user'}}
+            else:
+                return {'unauthorized': {'message': 'You are not authorized!'}}
+        else:
+            return None
