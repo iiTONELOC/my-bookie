@@ -3,12 +3,15 @@ from ..controllers import user_model_controller as mc
 
 
 def handle_response(data):
-    if 'error' in data:
-        return make_response(jsonify(error=data['error']), 400)
-    elif 'unauthorized' in data:
-        return make_response(jsonify(unauthorized=data['unauthorized']), 401)
-    else:
-        return jsonify(data)
+    if data is not None:
+        if 'error' in data:
+            return make_response(jsonify(error=data['error']), 400)
+        elif 'unauthorized' in data:
+            return make_response(jsonify(unauthorized=data['unauthorized']), 401)
+        else:
+            return jsonify(data)
+    else:  # data is None
+        return make_response(jsonify({'message': 'Not Found'}), 404)
 
 
 def user_get(param=None):
@@ -23,7 +26,7 @@ def user_get(param=None):
 def user_post():
     """User post route."""
     data = mc.create_user(request.json)
-    handle_response(data)
+    return handle_response(data)
 
 
 def user_put(param=None):
@@ -31,10 +34,9 @@ def user_put(param=None):
     if param is None:  # 'api/users/param'
         return
     else:  # 'api/users/param'
-        d = request.json
         data = mc.edit_user({
             "param": param,
-            "body": d
+            "body": request.json
         })
         if data is not None:
             return handle_response(data)
@@ -47,5 +49,5 @@ def user_delete(param=None):
     if param is None:  # 'api/users/param'
         return
     else:  # 'api/users/param'
-        print('DELETE USER REQUEST:', param)
-        return jsonify({'route': 'user_delete', 'param': param})
+        data = mc.delete_user(param)
+        return handle_response(data)

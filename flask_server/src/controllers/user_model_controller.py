@@ -127,7 +127,7 @@ def create_user(data=None):  # (C)reate - create a new user
 
 
 def edit_user(data=None):  # (U)update - edit a new user
-    """Edit a new user in the database"""
+    """Edit a user in the database"""
     if data is None:
         return None
     else:
@@ -137,14 +137,8 @@ def edit_user(data=None):  # (U)update - edit a new user
         user_list = get_all_users()
         user_by_id = filter_by_param(user_list, '_id', data['param'])
         if user_by_id is not None:
-            print(data)
-            # we can edit the user we have a match
+            # request body
             body = data['body']
-            # filter out the fields we don't want to edit
-            # a user can only edit their username and email
-            cleaned = {k: v for k, v in body.items() if k in [
-                'username', 'email']}
-
             # FIXME
             #  CHECK THE REQUESTING USERS CREDENTIALS
             #  Ensure it is the user trying to edit their own account
@@ -155,8 +149,7 @@ def edit_user(data=None):  # (U)update - edit a new user
                 # verify the params passed are valid
                 if 'email' in body:
                     # validate the email
-                    is_valid_email = validate_email(body['email'])
-                    if is_valid_email is False:
+                    if validate_email(body['email']) is False:
                         return {
                             'error': {
                                 'message': 'email is not in valid format!'
@@ -164,9 +157,8 @@ def edit_user(data=None):  # (U)update - edit a new user
                         }
                     else:
                         # check uniqueness
-                        is_unique = filter_by_param(
-                            user_list, 'email', body['email'])
-                        if is_unique is not None:
+                        if filter_by_param(
+                                user_list, 'email', body['email']) is not None:
                             return {
                                 'error': {
                                     'message': 'email already exists!'
@@ -177,9 +169,8 @@ def edit_user(data=None):  # (U)update - edit a new user
                             pass
                 if 'username' in body:
                     # verify the username is unique
-                    is_unique = filter_by_param(
-                        user_list, 'username', body['username'])
-                    if is_unique is not None:
+                    if filter_by_param(
+                            user_list, 'username', body['username']) is not None:
                         return {
                             'error': {'message': 'user already exists!'}
                         }
@@ -188,6 +179,8 @@ def edit_user(data=None):  # (U)update - edit a new user
                         pass
                 # update the user with the cleaned data
                 # find the user by id and update
+                cleaned = {k: v for k, v in body.items() if k in [
+                    'username', 'email']}
                 updated_user = m_db['users'].find_one_and_update(
                     {'_id': (ObjectId(data['param']))}, {'$set': cleaned}
                 )
@@ -197,5 +190,26 @@ def edit_user(data=None):  # (U)update - edit a new user
                     return {'error': {'message': 'Unable to update user'}}
             else:
                 return {'unauthorized': {'message': 'You are not authorized!'}}
+        else:
+            return None
+
+
+def delete_user(data=None):  # (D)elete - delete a user
+    """Delete a user in the database"""
+    if data is None:
+        return None
+    else:
+        # FIXME
+        #  CHECK THE REQUESTING USERS CREDENTIALS
+        is_authorized = True
+
+        if is_authorized is True:
+            del_user = m_db['users'].find_one_and_delete(
+                {'_id': ObjectId(data)}
+            )
+            if del_user is not None:
+                print('DEL USER')
+                print(del_user)
+                return {'message': 'User deleted!'}
         else:
             return None
