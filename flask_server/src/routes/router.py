@@ -1,6 +1,6 @@
 from ..middleware.auth import with_auth
 from ..controllers import api_route_controller
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, render_template
 from ..controllers import user_model_controller as uc
 
 
@@ -11,13 +11,11 @@ def app_router(app):
     #   client's build folder
     @app.route('/')
     def index():
-        return jsonify({'message': 'Hello World!'})
+        return render_template('index.html')
 
     @app.route("/<name>")
     def react(name):
-        # we will return the front end here
-        # handles all routes except for the api routes
-        return jsonify({'message': 'Hello World!'})
+        return render_template('index.html')
 
     @app.route('/api/<name>', methods=['GET', 'POST'])
     def api(name):
