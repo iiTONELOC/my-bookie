@@ -32,10 +32,11 @@ class Auth:
 
     @staticmethod
     def get_token(req):
+        print('Grabbing token from headers')
         if req.headers.get('Authorization'):
             try:
                 return req.headers.get('Authorization').split(' ')[1].strip()
-            except error as e:
+            except IndexError as e:
                 return {'error': {'message': f'Invalid token: {e}'}}
 
         else:
@@ -43,6 +44,7 @@ class Auth:
 
     @staticmethod
     def decode_token(token):
+        print('Decoding token from headers')
         keys = get_secret_keys()
         try:
             return jwt.decode(token, keys['SECRET_KEY'], algorithms=['HS256'])
@@ -53,7 +55,7 @@ class Auth:
             # create a tracker that tracks the ip and number of failed attempts
             # if the number of failed attempts is greater than 5, block the ip
             return Auth.unauthorized_msg('Invalid token. Please log in again.')
-        except error as e:
+        except jwt.exceptions.DecodeError as e:
             return Auth.unauthorized_msg(e)
 
     @staticmethod

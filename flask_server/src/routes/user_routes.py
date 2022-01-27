@@ -38,6 +38,8 @@ def user_put(param=None):
     if param is None:  # 'api/users/param'
         return
     else:  # 'api/users/param'
+        # check if the request has the user object
+        print('REQUEST', request)
         if Auth.is_authorized(request, param):
             data = mc.edit_user({
                 "param": param,

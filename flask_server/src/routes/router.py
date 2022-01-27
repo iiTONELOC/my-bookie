@@ -28,4 +28,4 @@ def app_router(app):
     def api_1(name):
         if name == 'login':
             return uc.user_login(make_response, request.json)
-        return with_auth(request, make_response, api_route_controller('users', name))
+        return api_route_controller('users', name)

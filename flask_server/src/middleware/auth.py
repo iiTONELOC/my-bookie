@@ -13,6 +13,12 @@ def with_auth(req, res, next):
                         'Please log in to access this resource.'
                     )), 401)
         else:
+            # attach the user's id to the request
+            user = {
+                '_id': str(decoded['_id']),
+                'username': decoded['username'],
+            }
+            req['user'] = user
             return next
     else:
         return res(
