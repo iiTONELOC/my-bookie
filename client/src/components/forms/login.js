@@ -1,5 +1,5 @@
 import { FormContainer } from '.'
-import Checkbox from './checkbox';
+import Checkbox, { getRemembered } from './checkbox';
 import auth from '../../utils/auth';
 import { loginUser } from "../../api";
 import EmailInput from './email_input';
@@ -7,14 +7,7 @@ import { useState, useEffect } from 'react';
 import PasswordInput from './password_input';
 import { LockClosedIcon } from '@heroicons/react/solid'
 
-function getRemembered() {
-    const remembered = localStorage.getItem('_remember_me');
-    if (remembered) {
-        const data = JSON.parse(remembered);
-        return { email: data.email, password: null }
-    };
-    return null;
-};
+
 export default function LoginForm() {
     const [checked, setChecked] = useState(localStorage.getItem('_remember_me') ? true : false)
     const [formState, setFormState] = useState(getRemembered() === null ? { email: null, password: null }
@@ -26,10 +19,7 @@ export default function LoginForm() {
             [name]: value,
         });
     };
-    const handleRemember = (e) => {
-        const { checked } = e.target;
-        setChecked(checked);
-    };
+
     const submitFormHandler = async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -59,7 +49,7 @@ export default function LoginForm() {
                 <PasswordInput onChange={handleChange} />
             </div>
             <div className="flex items-center justify-between">
-                <Checkbox onChange={handleRemember} defaultChecked={checked} />
+                <Checkbox checked={checked} setChecked={setChecked} />
                 <button
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.replace('/sign-up') }}
                     className="bg-slate-900 hover:bg-indigo-800 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
