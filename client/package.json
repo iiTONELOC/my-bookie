@@ -2,14 +2,13 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3001",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
+    "react-scripts": "5.0.0-next.58",
     "tailstrap": "^0.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -17,7 +16,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "watch": "nodemon --exec \"npm run build \" -e js --ignore build/"
   },
   "eslintConfig": {
     "extends": [
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.2",
+    "nodemon": "^2.0.15",
     "postcss": "^8.4.5",
     "tailwindcss": "^3.0.16"
   }

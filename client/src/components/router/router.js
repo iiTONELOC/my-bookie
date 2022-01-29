@@ -1,4 +1,4 @@
-import { Home } from '../../pages/home';
+import { Home, Login } from '../../pages';
 import { NotFound } from '../notfound';
 
 export default function Router({ path }) {
@@ -6,6 +6,8 @@ export default function Router({ path }) {
     switch (path) {
         case '/':
             return <Home />
+        case '/login':
+            return <Login />
         default:
             return <NotFound />
     }
