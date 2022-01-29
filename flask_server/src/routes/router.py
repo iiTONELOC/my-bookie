@@ -17,6 +17,10 @@ def app_router(app):
     def react(name):
         return render_template('index.html')
 
+    @app.route('/users/<name>/dashboard')
+    def user_dash(name):
+        return render_template('index.html')
+
     @app.route('/api/<name>', methods=['GET', 'POST'])
     def api(name):
         # add auth to all the api routes?

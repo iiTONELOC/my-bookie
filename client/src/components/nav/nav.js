@@ -1,4 +1,25 @@
-const navData = [
+import { useState, useEffect } from 'react';
+import auth from '../../utils/auth';
+
+
+const loggedInData = [
+    {
+        name: 'Home',
+        // icon: '',
+        path: '/'
+    },
+    {
+        name: 'Dashboard',
+        // icon: '',
+        path: '/dashboard'
+    },
+    {
+        name: 'Logout',
+        // icon: '',
+        path: '/logout'
+    },
+];
+const navLinks = [
     {
         name: 'Home',
         // icon: '',
@@ -15,28 +36,25 @@ const navData = [
         path: '/login'
     },
 ];
-const loggedInData = [
-    {
-        name: 'Home',
-        // icon: '',
-        path: '/'
-    },
-    {
-        name: 'Dashboard',
-        // icon: '',
-        path: '/about'
-    },
-    {
-        name: 'Logout',
-        // icon: '',
-        path: '/logout'
-    },
-];
 export default function Nav() {
+    const loggedIn = auth.loggedIn();
+    const [navData, setNavData] = useState(loggedIn ? loggedInData : navLinks);
+
     const active = (path) => {
+        console.log(window.location.pathname)
         if (path === window.location.pathname) {
             return 'p-1 border-t-2 border-yellow-400';
+        } if (window.location.pathname.includes('dashboard') && path === '/dashboard') {
+            return 'p-1 border-t-2 border-yellow-400';
         }
+    }
+    useEffect(() => {
+        setNavData(loggedIn ? loggedInData : navLinks);
+    }, [loggedIn])
+    const logout = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return auth.logout();
     }
     return (
         <nav className="bg-slate-900 w-full flex flex-row justify-between items-center text-gray-200 self-start">
@@ -52,8 +70,9 @@ export default function Nav() {
                             className=''
                             key={'Nav: ' + navItem?.name || `${index}`}>
                             <a
+                                onClick={navItem.name === 'Logout' ? (e) => logout(e) : () => { }}
                                 className={`lg:text-xl hover:text-yellow-400 ${active(navItem.path)}`}
-                                href={navItem.path}>
+                                href={navItem.name !== 'Logout' ? navItem.path : ''}>
                                 {navItem.name}
                             </a>
                         </li>
