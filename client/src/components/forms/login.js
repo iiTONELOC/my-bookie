@@ -53,13 +53,18 @@ export default function LoginForm() {
     }, [checked]);
     return (
         <FormContainer>
-            <h2 className='text-center text-xl text-gray-400 -mt-8'>Login</h2>
+            <h2 className='text-center text-xl text-gray-300 -mt-8'>Login</h2>
             <div className="rounded-md shadow-sm -space-y-px">
                 <EmailInput onChange={handleChange} defaultValue={formState.email} />
                 <PasswordInput onChange={handleChange} />
             </div>
             <div className="flex items-center justify-between">
                 <Checkbox onChange={handleRemember} defaultChecked={checked} />
+                <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.replace('/sign-up') }}
+                    className="bg-slate-900 hover:bg-indigo-800 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Create account instead
+                </button>
             </div>
             <div>
                 <button
