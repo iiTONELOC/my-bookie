@@ -1,14 +1,12 @@
 import { Router, Nav } from './components'
-import { Page } from 'tailstrap'
 function App() {
   const path = window.location.pathname;
   return (
-
-
-    <Page variant='start-center' className='dark:bg-gray-600'>
+    <section className='min-h-screen w-screen bg-slate-700 flex flex-col'>
       <Nav />
       <Router path={path} />
-    </Page>
+    </section>
+
   )
 }
 

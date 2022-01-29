@@ -236,7 +236,12 @@ def user_login(res, data=None):
                     match_user['username'],
                     str(match_user['_id'])
                 )
-                return {'token': token}
+                return {
+                    'token': token,
+                    'username': match_user['username'],
+                    'email': match_user['email'],
+                    "_id": str(match_user['_id'])
+                }
             else:
                 return err_msg
         else:

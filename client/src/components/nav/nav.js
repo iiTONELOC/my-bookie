@@ -1,38 +1,65 @@
-import { Nav as TailNav, Button } from 'tailstrap'
-
-
 const navData = [
     {
-        name:
-            `${window.location.pathname === '/' ? 'Login' : 'Home'}`,
-        props: {
-            onClick: () => {
-                window.location.replace(
-                    `${window.location.pathname === '/' ? '/login' : '/'}`
-                )
-            }
-        }
+        name: 'Home',
+        // icon: '',
+        path: '/'
     },
-    { name: 'Create Account', props: { onClick: () => window.location.replace('/sign-up') } },
-    { name: 'Testing Grounds', props: { onClick: () => window.location.replace('/test') } },
+    {
+        name: 'About',
+        // icon: '',
+        path: '/about'
+    },
+    {
+        name: 'Login',
+        // icon: '',
+        path: '/login'
+    },
+];
+const loggedInData = [
+    {
+        name: 'Home',
+        // icon: '',
+        path: '/'
+    },
+    {
+        name: 'Dashboard',
+        // icon: '',
+        path: '/about'
+    },
+    {
+        name: 'Logout',
+        // icon: '',
+        path: '/logout'
+    },
 ];
 export default function Nav() {
+    const active = (path) => {
+        if (path === window.location.pathname) {
+            return 'p-1 border-t-2 border-yellow-400';
+        }
+    }
     return (
-        <TailNav.Bar
-            variant='right'
-            spacing='gap-8 p-4 items-center'
-            className='bg-gray-900 border-b-1 border-indigo-600 w-full text-xl place-content-center'
-        >
-            {navData.map(item => (
-                <TailNav.Item key={item.name}>
-                    <Button
-                        override={true}
-                        label={item.name}
-                        props={item.props}
-                        className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg p-3'
-                    />
-                </TailNav.Item>
-            ))}
-        </TailNav.Bar>
+        <nav className="bg-slate-900 w-full flex flex-row justify-between items-center text-gray-200 self-start">
+            <span className=''>
+                <h1 className="ml-3 align-middle text-2xl p-2">
+                    MyBookie
+                </h1>
+            </span>
+            <ul className="flex flex-row gap-10 p-2 mx-3">
+                {navData.map((navItem, index) => {
+                    return (
+                        <li
+                            className=''
+                            key={'Nav: ' + navItem?.name || `${index}`}>
+                            <a
+                                className={`lg:text-xl hover:text-yellow-400 ${active(navItem.path)}`}
+                                href={navItem.path}>
+                                {navItem.name}
+                            </a>
+                        </li>
+                    )
+                })}
+            </ul>
+        </nav>
     );
 }

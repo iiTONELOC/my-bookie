@@ -1,19 +1,10 @@
-// import {useState, useEffect} from 'react';
-import { Box } from 'tailstrap';
+import { LoginForm } from "../../components"
 export default function Login() {
-    console.log('LOGIN PAGE')
     return (
-        <Box
-            className='bg-gray-200 dark:bg-gray-500 text-black dark:text-gray-300 w-full min-h-full justify-items-center flex-col'
-        >
-            <h1 className='block text-center'>
-                Login
-            </h1>
-
+        <div
+            className='text-gray-300 w-full h-full flex flex-col justify-center items-center gap-8 m-auto'>
             {/* login form */}
-            <form className='w-full max-w-sm bg-gray-500 dark:bg-slate-700'>
-
-            </form>
-        </Box>
+            <LoginForm />
+        </div>
     )
 }

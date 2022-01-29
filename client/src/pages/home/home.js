@@ -1,7 +1,7 @@
 export default function Home() {
     return (
-        <div>
-            <h1 className='text-5xl text-center text-gray-200 hover:text-green-700'>
+        <div className="flex flex-col w-full  bg-black">
+            <h1 className='text-3xl md:text-5xl text-center text-gray-200 mt-5'>
                 Welcome to MyBookie!
             </h1>
         </div>
