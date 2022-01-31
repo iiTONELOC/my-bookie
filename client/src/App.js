@@ -2,7 +2,7 @@ import { Router, Nav } from './components'
 function App() {
   const path = window.location.pathname;
   return (
-    <section className='min-h-screen w-screen bg-slate-700 flex flex-col'>
+    <section className='h-screen w-screen bg-slate-700 flex flex-col overflow-hidden'>
       <Nav />
       <Router path={path} />
     </section>

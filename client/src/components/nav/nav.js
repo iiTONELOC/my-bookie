@@ -39,13 +39,12 @@ const navLinks = [
 export default function Nav() {
     const loggedIn = auth.loggedIn();
     const [navData, setNavData] = useState(loggedIn ? loggedInData : navLinks);
-
     const active = (path) => {
         console.log(window.location.pathname)
         if (path === window.location.pathname) {
-            return 'p-1 border-t-2 border-yellow-400';
+            return 'p-1 border-t-2 border-myPink';
         } if (window.location.pathname.includes('dashboard') && path === '/dashboard') {
-            return 'p-1 border-t-2 border-yellow-400';
+            return 'p-1 border-t-2 border-myPink';
         }
     }
     useEffect(() => {
@@ -57,10 +56,10 @@ export default function Nav() {
         return auth.logout();
     }
     return (
-        <nav className="bg-slate-900 w-full flex flex-row justify-between items-center text-gray-200 self-start">
+        <nav navdata='navbar' className="bg-slate-900 w-full flex flex-row justify-between items-center text-gray-200 self-start h-16">
             <span className=''>
-                <h1 className="ml-3 align-middle text-2xl p-2">
-                    MyBookie
+                <h1 className="ml-3 align-middle text-2xl p-2 hover:text-myLightBlue">
+                    <span className="font-medium text-3xl text-myPink">My</span>Bookie
                 </h1>
             </span>
             <ul className="flex flex-row gap-10 p-2 mx-3">
@@ -71,7 +70,7 @@ export default function Nav() {
                             key={'Nav: ' + navItem?.name || `${index}`}>
                             <a
                                 onClick={navItem.name === 'Logout' ? (e) => logout(e) : () => { }}
-                                className={`lg:text-xl hover:text-yellow-400 ${active(navItem.path)}`}
+                                className={`lg:text-xl hover:text-myLightBlue ${active(navItem.path)}`}
                                 href={navItem.name !== 'Logout' ? navItem.path : ''}>
                                 {navItem.name}
                             </a>
@@ -79,6 +78,6 @@ export default function Nav() {
                     )
                 })}
             </ul>
-        </nav>
+        </nav >
     );
 }

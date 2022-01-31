@@ -12,7 +12,7 @@ import { PlusCircleIcon, ExclamationCircleIcon as AlertIcon } from "@heroicons/r
 
 export default function SignUpForm() {
     const [errorMessage, setErrorMessage] = useState(null)
-    const [formState, setFormState] = useState(getRemembered() === !null ? { email: null, username: null, password: null }
+    const [formState, setFormState] = useState(getRemembered() !== !null ? { email: null, username: null, password: null }
         : { email: getRemembered().email, username: null, password: null })
     const handleChange = (e) => {
         const { name, value } = e.target;
