@@ -1,17 +1,19 @@
 import { FormContainer } from '.'
-import Checkbox, { getRemembered } from './checkbox';
 import auth from '../../utils/auth';
-import { createNewUser } from "../../api";
 import EmailInput from './email_input';
-import { useState, useEffect } from 'react';
+import { isFormValidated } from './login';
+import { createNewUser } from "../../api";
+import { getRemembered } from './checkbox';
+import { useState, } from 'react';
 import PasswordInput from './password_input';
 import UsernameInput from './username_input';
-import { PlusCircleIcon } from "@heroicons/react/solid";
+
+import { PlusCircleIcon, ExclamationCircleIcon as AlertIcon } from "@heroicons/react/solid";
 
 export default function SignUpForm() {
-    const [checked, setChecked] = useState(localStorage.getItem('_remember_me') ? true : false)
-    const [formState, setFormState] = useState(getRemembered() === null ? { email: null, password: null }
-        : getRemembered())
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [formState, setFormState] = useState(getRemembered() === !null ? { email: null, username: null, password: null }
+        : { email: getRemembered().email, username: null, password: null })
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormState({
@@ -27,25 +29,29 @@ export default function SignUpForm() {
             username: formState.username,
             password: formState.password
         };
-        const response = await createNewUser(newUser);
-        if (response.status === 200) {
+        const validated = isFormValidated(formState);
+        if (validated === true || validated === 'true') {
+            const response = await createNewUser(newUser);
             const data = await response.json();
-            const { error, token, ...rest } = data;
-            // set the token in local storage
-            if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
-            return auth.login(token);
-        } else {
-            alert('Wrong username or password');
-        };
+            const { token } = data;
+            if (response.status === 200) {
+                return auth.login(token);
+            } else {
+                const { error } = data;
+                if (error) {
+                    setErrorMessage(error);
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 3500)
+                }
+            };
+        }
     };
-    useEffect(() => {
-        if (checked === false) localStorage.removeItem('_remember_me');
-    }, [checked]);
+
     return (
         <>
-            <div className='bg-red-500 rounded-lg'>
-                {/* error */}
-                {/* <span>This is an error!</span> */}
+            <div className='bg-red-500 rounded-lg text-white flex flex-row justify-between drop-shadow-lg'>
+                {errorMessage && <><AlertIcon className='ml-1 w-7 h-7 self-center' /><span className='p-2 ml-1 content-center'>{errorMessage.message}</span></>}
             </div>
             <FormContainer>
                 <h2 className='text-center text-xl text-gray-300 -mt-8'>Sign Up</h2>
@@ -56,15 +62,16 @@ export default function SignUpForm() {
                     <PasswordInput onChange={handleChange} />
                 </div>
                 <div className="flex items-center justify-between">
-                    <Checkbox checked={checked} setChecked={setChecked} />
-                    <button
+                    <span
+                        tabIndex={-1}
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.replace('/login') }}
                         className="bg-slate-900 hover:bg-indigo-800 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Login instead
-                    </button>
+                    </span>
                 </div>
                 <div>
                     <button
+                        disabled={!isFormValidated(formState)}
                         onClick={submitFormHandler}
                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
