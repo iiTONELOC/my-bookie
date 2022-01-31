@@ -2,7 +2,7 @@ from .db_config import db
 from ..auth.auth import Auth
 from bson.objectid import ObjectId
 from ..utils import validate_email
-from ..models.user_model import User, hash_password, check_password
+from ..models.user_model import User, hash_password
 
 m_db = db()
 
@@ -122,7 +122,7 @@ def create_user(data=None):  # (C)reate - create a new user
         if did_save.inserted_id is None:
             return {'error': {'message': 'Unable to create user'}}
         else:
-            return user.get_info()
+            return get_one_user(email=data['email'])
 
 
 def edit_user(data=None):  # (U)update - edit a new user
@@ -196,53 +196,3 @@ def delete_user(data=None):  # (D)elete - delete a user
             return {'message': 'User deleted!'}
         else:
             return None
-
-# LOGIN/LOGOUT handlers
-# ----------------------
-
-
-def user_login(res, data=None):
-    """Login a user. returns a JWT token"""
-    err_msg = res(({'error': {'message': 'Incorrect credentials'}}), 400)
-    if data is None:
-        return err_msg
-    else:
-        # get user data
-        user_req = {}
-        if data.get('username'):
-            user_req['username'] = data['username']
-        if data.get('email'):
-            user_req['email'] = data['email']
-        try:
-            user_req['password'] = data['password']
-        except KeyError:
-            return err_msg
-
-        # variable to hold found user
-        match_user = None
-        if 'username' in user_req:
-            match_user = m_db['users'].find_one(
-                {'username': user_req['username']})
-        if 'email' in user_req:
-            match_user = m_db['users'].find_one(
-                {'email': user_req['email']})
-        # if match
-        if match_user is not None:
-            # user found now check password
-            if check_password(user_req['password'], match_user['password']):
-                # generate a token for the user
-                token = Auth.sign_token(
-                    match_user['email'],
-                    match_user['username'],
-                    str(match_user['_id'])
-                )
-                return {
-                    'token': token,
-                    'username': match_user['username'],
-                    'email': match_user['email'],
-                    "_id": str(match_user['_id'])
-                }
-            else:
-                return err_msg
-        else:
-            return err_msg
