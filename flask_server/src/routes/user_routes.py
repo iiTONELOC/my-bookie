@@ -1,6 +1,10 @@
+from ..controllers.db_config import db
 from ..auth.auth import Auth
 from flask import jsonify, request, make_response
 from ..controllers import user_model_controller as mc
+from ..models.user_model import check_password
+# database connection
+m_db = db()
 
 
 def handle_response(data):
@@ -30,7 +34,27 @@ def user_get(param=None):
 def user_post():
     """User post route."""
     data = mc.create_user(request.json)
-    return handle_response(data)
+    # create a token for the user
+    if 'error' or 'unauthorized' not in data:
+        try:
+            token = Auth.sign_token(
+                data['email'],
+                data['username'],
+                str(data['_id'])
+            )
+            return {
+                'token': token,
+                'username': data['username'],
+                'email': data['email'],
+                "_id": str(data['_id'])
+            }
+        except KeyError:
+            return make_response(jsonify(data), 400)
+        except Exception as e:
+            print(e)
+            return make_response(jsonify({'error': e}), 500)
+    else:
+        return handle_response(data)
 
 
 def user_put(param=None):
@@ -39,7 +63,6 @@ def user_put(param=None):
         return
     else:  # 'api/users/param'
         # check if the request has the user object
-        print('REQUEST', request)
         if Auth.is_authorized(request, param):
             data = mc.edit_user({
                 "param": param,
@@ -63,3 +86,54 @@ def user_delete(param=None):
             return handle_response(data)
         else:
             return make_response(jsonify(Auth.unauthorized_msg(None)), 401)
+
+
+# LOGIN/LOGOUT handlers
+# ----------------------
+
+
+def user_login(res, data=None):
+    """Login a user. returns a JWT token"""
+    err_msg = res(({'error': {'message': 'Incorrect credentials'}}), 400)
+    if data is None:
+        return err_msg
+    else:
+        # get user data
+        user_req = {}
+        if data.get('username'):
+            user_req['username'] = data['username']
+        if data.get('email'):
+            user_req['email'] = data['email']
+        try:
+            user_req['password'] = data['password']
+        except KeyError:
+            return err_msg
+
+        # variable to hold found user
+        match_user = None
+        if 'username' in user_req:
+            match_user = m_db['users'].find_one(
+                {'username': user_req['username']})
+        if 'email' in user_req:
+            match_user = m_db['users'].find_one(
+                {'email': user_req['email']})
+        # if match
+        if match_user is not None:
+            # user found now check password
+            if check_password(user_req['password'], match_user['password']):
+                # generate a token for the user
+                token = Auth.sign_token(
+                    match_user['email'],
+                    match_user['username'],
+                    str(match_user['_id'])
+                )
+                return {
+                    'token': token,
+                    'username': match_user['username'],
+                    'email': match_user['email'],
+                    "_id": str(match_user['_id'])
+                }
+            else:
+                return err_msg
+        else:
+            return err_msg

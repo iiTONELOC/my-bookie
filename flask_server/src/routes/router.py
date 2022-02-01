@@ -1,7 +1,7 @@
 from ..middleware.auth import with_auth
 from ..controllers import api_route_controller
-from flask import jsonify, request, make_response
-from ..controllers import user_model_controller as uc
+from flask import jsonify, request, make_response, render_template
+from .user_routes import user_login
 
 
 def app_router(app):
@@ -11,13 +11,15 @@ def app_router(app):
     #   client's build folder
     @app.route('/')
     def index():
-        return jsonify({'message': 'Hello World!'})
+        return render_template('index.html')
 
     @app.route("/<name>")
     def react(name):
-        # we will return the front end here
-        # handles all routes except for the api routes
-        return jsonify({'message': 'Hello World!'})
+        return render_template('index.html')
+
+    @app.route('/users/<name>/dashboard')
+    def user_dash(name):
+        return render_template('index.html')
 
     @app.route('/api/<name>', methods=['GET', 'POST'])
     def api(name):
@@ -27,5 +29,5 @@ def app_router(app):
     @app.route('/api/users/<name>',  methods=['GET', 'POST', 'PUT', 'DELETE'])
     def api_1(name):
         if name == 'login':
-            return uc.user_login(make_response, request.json)
+            return user_login(make_response, request.json)
         return api_route_controller('users', name)

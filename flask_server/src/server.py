@@ -1,8 +1,10 @@
 import os
 from flask import Flask
 from .utils import get_environment
+from dotenv import load_dotenv
 
-env_ = get_environment()
+load_dotenv()
+
 static = '../../client/build'
 static = os.path.normpath(static)
 
@@ -51,7 +53,7 @@ class Server:
         self.port = port
         self.host = host
         self.route_controller = route_controller
-        self.app.config['ENV'] = env_  # uses the NODE_ENV environment variable
+        self.app.config['ENV'] = os.getenv('ENV')  # uses the NODE_ENV environment variable
 
     def run(self):
         if self.route_controller is not None:
