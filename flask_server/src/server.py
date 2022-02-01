@@ -60,4 +60,4 @@ class Server:
                 self.route_controller(self.app)
             except Exception as e:
                 print(f'Error loading route_controller: {e}')
-        self.app.run(host=self.host, debug=True)
+        self.app.run(debug=True)
