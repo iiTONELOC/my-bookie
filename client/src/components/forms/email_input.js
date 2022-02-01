@@ -19,16 +19,17 @@ export default function EmailInput({
             setValidated(false);
             clearError();
         } else if (len > 0) {
+            console.log('validating email', e.target.value);
             const isValid = validateEmail(e.target.value);
-            console.log('EMAIL CHECK', isValid);
+            console.log('validating email', isValid);
             if (!isValid) {
                 setError('Please enter a valid email address');
                 setValidated(false);
                 clearError();
+            } else {
+                setError(null);
+                setValidated(true);
             }
-        } else {
-            setError(null);
-            setValidated(true);
         }
     }
 

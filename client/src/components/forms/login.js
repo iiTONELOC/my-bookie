@@ -11,11 +11,16 @@ export function isFormValidated(formState) {
     if (formState) {
         const fields = document.querySelectorAll('[formdata]');
         let valid = []
-        fields.forEach(field => {
+        console.log(fields)
+        console.log(document.querySelectorAll('[formdata]'))
+        document.querySelectorAll('[formdata]').forEach(field => {
+
             const val = field?.attributes?.formdata?.value;
             valid.push(val)
         });
+
         [...Object.values(formState)].forEach(value => {
+
             if (value === null || value.trim() === '') {
                 valid.push(false)
             } else {
@@ -60,25 +65,24 @@ export default function LoginForm() {
             password: formState.password
         };
         // check form stats
-        const validated = isFormValidated(formState);
-        if (validated === true || validated === 'true') {
-            const response = await loginUser(user);
-            const data = await response.json();
-            if (response.status === 200) {
-                const { token, ...rest } = data;
-                // set the token in local storage
-                if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
-                return auth.login(token);
-            } else {
-                const { error } = data;
-                if (error) {
-                    setErrorMessage(error);
-                    setTimeout(() => {
-                        setErrorMessage(null);
-                    }, 3500)
-                }
+
+        const response = await loginUser(user);
+        const data = await response.json();
+        if (response.status === 200) {
+            const { token, ...rest } = data;
+            // set the token in local storage
+            if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
+            return auth.login(token);
+        } else {
+            const { error } = data;
+            if (error) {
+                setErrorMessage(error);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 3500)
             }
-        };
+        }
+
     };
     useEffect(() => {
         if (checked === false) localStorage.removeItem('_remember_me');
@@ -105,7 +109,6 @@ export default function LoginForm() {
                 </div>
                 <div>
                     <button
-                        disabled={!isFormValidated(formState)}
                         onClick={submitFormHandler}
                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >

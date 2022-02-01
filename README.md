@@ -100,5 +100,5 @@ The env runs `version = 3.10.2` and is the recommended Python version for your e
 - Start Server
 
   ```shell
-  py main.py
+  py wsgi.py
   ```
