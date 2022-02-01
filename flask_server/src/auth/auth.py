@@ -32,7 +32,6 @@ class Auth:
 
     @staticmethod
     def get_token(req):
-        print('Grabbing token from headers')
         if req.headers.get('Authorization'):
             try:
                 return req.headers.get('Authorization').split(' ')[1].strip()
@@ -44,7 +43,6 @@ class Auth:
 
     @staticmethod
     def decode_token(token):
-        print('Decoding token from headers')
         keys = get_secret_keys()
         try:
             return jwt.decode(token, keys['SECRET_KEY'], algorithms=['HS256'])

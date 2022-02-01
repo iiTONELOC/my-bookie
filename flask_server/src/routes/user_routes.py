@@ -36,9 +36,6 @@ def user_post():
     data = mc.create_user(request.json)
     # create a token for the user
     if 'error' or 'unauthorized' not in data:
-        print("++++++++++++++++++++++++++")
-        print(data)
-        print('++++++++++++++++++++++++++')
         try:
             token = Auth.sign_token(
                 data['email'],
@@ -66,7 +63,6 @@ def user_put(param=None):
         return
     else:  # 'api/users/param'
         # check if the request has the user object
-        print('REQUEST', request)
         if Auth.is_authorized(request, param):
             data = mc.edit_user({
                 "param": param,

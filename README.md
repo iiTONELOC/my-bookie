@@ -9,7 +9,6 @@ Front End
 - JWT
 - React.js
 - Tailwindcss
-- Tailstrap (a Tailwindcss component library)
 
 Back End
 
@@ -21,7 +20,7 @@ Back End
 
 ## Installation
 
-Currently this project isn't configured as a Python package so manual installation of the installed packages is required
+Currently, this project isn't configured as a Python package so manual installation of the installed packages is required
 
 ### Clone Repo
 
@@ -38,8 +37,7 @@ The env runs `version = 3.10.2` and is the recommended Python version for your e
 
 - From the root of the project:
 
-  ```sh
-  cd flask_server
+  ```shell
   py install_virt.py
   ```
 
@@ -51,12 +49,43 @@ The env runs `version = 3.10.2` and is the recommended Python version for your e
   venv\Scripts\activate
   ```
 
-- Run the run_install script from inside of the virtual environment.  
+- Run the run_install script from inside the virtual environment.  
   If the last command was successful, there should be a (venv) visible in the CLI
 
-  ```sh
+  ```shell
   py run_install.py
   ```
+
+## Installing the Client
+
+- The client uses React.js node.js and npm for the package manager
+- If you do not have those already installed you can follow the directions in the links below:
+  - [Node.js](https://nodejs.org/en/)
+    - [NPM](https://docs.npmjs.com/cli/v8/configuring-npm/install) *comes with an installation of Node.js*
+  - [React.js](https://reactjs.org/)
+- From the virtual environment:
+
+  ```shell
+     py utils\install_client.py
+  ```
+  
+## Generating the Client's build folder
+
+- From the virtual environment:
+
+  ```shell
+     py utils\build_client.py
+  ```
+
+## Create Your .env File
+
+- If you are trying to run this project locally you need a .env at the root of the project
+- create a .env file at the root of your project and use the following variables:
+  
+   ```shell 
+      ENV=development
+      MONGO_DB_NAME=<enter the name of your database here>
+   ```
 
 ## Running the Server
 
@@ -64,12 +93,12 @@ The env runs `version = 3.10.2` and is the recommended Python version for your e
 
   On Windows:
 
-  ```sh
+  ```shell
   venv\Scripts\activate
   ```
 
 - Start Server
 
-  ```sh
+  ```shell
   py main.py
   ```
