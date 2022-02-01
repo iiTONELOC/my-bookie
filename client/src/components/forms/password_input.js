@@ -16,12 +16,11 @@ export default function PasswordInput({
             setError('A password is required');
             setValidated(false);
             clearError();
-        } else if (len > 0 && len <= 7) {
-
+        } else if (len <= 7) {
             setError("Passwords must be at least 8 characters");
             setValidated(false);
             clearError();
-        } else {
+        } else if (len >= 8) {
             setError(null);
             setValidated(true);
         }

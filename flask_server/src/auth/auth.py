@@ -9,12 +9,8 @@ def set_expiration():
 
 
 def get_secret_keys():
-    if os.getenv('NODE_ENV') != 'production':
-        from .env import set_auth_env
-        set_auth_env()
     return {
         'SECRET_KEY': os.getenv('SECRET_KEY'),
-        'TOKEN_ENCODING': os.getenv('TOKEN_ENCODING'),
     }
 
 

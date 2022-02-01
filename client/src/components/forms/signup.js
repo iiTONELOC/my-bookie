@@ -1,10 +1,10 @@
 import { FormContainer } from '.'
+import { useState, } from 'react';
 import auth from '../../utils/auth';
 import EmailInput from './email_input';
 import { isFormValidated } from './login';
 import { createNewUser } from "../../api";
 import { getRemembered } from './checkbox';
-import { useState, } from 'react';
 import PasswordInput from './password_input';
 import UsernameInput from './username_input';
 
@@ -29,23 +29,22 @@ export default function SignUpForm() {
             username: formState.username,
             password: formState.password
         };
-        const validated = isFormValidated(formState);
-        if (validated === true || validated === 'true') {
-            const response = await createNewUser(newUser);
-            const data = await response.json();
-            const { token } = data;
-            if (response.status === 200) {
-                return auth.login(token);
-            } else {
-                const { error } = data;
-                if (error) {
-                    setErrorMessage(error);
-                    setTimeout(() => {
-                        setErrorMessage(null);
-                    }, 3500)
-                }
-            };
-        }
+
+        const response = await createNewUser(newUser);
+        const data = await response.json();
+        const { token } = data;
+        if (response.status === 200) {
+            return auth.login(token);
+        } else {
+            const { error } = data;
+            if (error) {
+                setErrorMessage(error);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 3500)
+            }
+        };
+
     };
 
     return (
@@ -71,7 +70,7 @@ export default function SignUpForm() {
                 </div>
                 <div>
                     <button
-                        disabled={!isFormValidated(formState)}
+
                         onClick={submitFormHandler}
                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
