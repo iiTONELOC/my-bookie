@@ -1,1 +1,1 @@
-web: gunicorn --chdir flask_server main:my_app
+web: gunicorn wsgi:my_app

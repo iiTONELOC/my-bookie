@@ -1,4 +1,3 @@
-import os
 from .src.server import Server
 from .src.routes.router import app_router
 from dotenv import load_dotenv
