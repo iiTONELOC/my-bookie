@@ -43,17 +43,16 @@ class Server:
             static_folder=static,
             template_folder=static,
             route_controller=None,
-            port=os.getenv('PORT') or 5000,
             host='0.0.0.0'):
         self.app = Flask(
             __name__, static_url_path=static_url_path,
             static_folder=static_folder,
             template_folder=template_folder
         )
-        self.port = port
         self.host = host
         self.route_controller = route_controller
-        self.app.config['ENV'] = os.getenv('ENV')  # uses the NODE_ENV environment variable
+        # uses the NODE_ENV environment variable
+        self.app.config['ENV'] = os.getenv('ENV')
 
     def run(self):
         if self.route_controller is not None:
@@ -61,4 +60,4 @@ class Server:
                 self.route_controller(self.app)
             except Exception as e:
                 print(f'Error loading route_controller: {e}')
-        self.app.run(host=self.host, port=self.port, debug=True)
+        self.app.run(host=self.host, debug=True)

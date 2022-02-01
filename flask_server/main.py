@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 my_app = Server(
     route_controller=app_router,
-    port=int(os.getenv('PORT') or '3001')
 )
 
 if __name__ == '__main__':
