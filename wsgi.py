@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, make_response, render_template
+from flask import Flask, request, make_response, render_template, send_from_directory
 from flask_server.src.routes.user_routes import user_login
 from flask_server.src.controllers import api_route_controller
 static = 'client/build'
@@ -16,7 +16,10 @@ def index():
 
 @app.route("/<name>")
 def react(name):
-    return render_template('index.html')
+    try:
+        return send_from_directory(static, name)
+    except FileNotFoundError:
+        return send_from_directory(static, 'index.html')
 
 
 @app.route('/users/<name>/dashboard')
