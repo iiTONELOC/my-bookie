@@ -16,10 +16,13 @@ def index():
 
 @app.route("/<name>")
 def react(name):
-    try:
-        return send_from_directory(static, name)
-    except FileNotFoundError:
-        return send_from_directory(static, 'index.html')
+    if name in os.listdir(static):
+        try:
+            return send_from_directory(static, name)
+        except FileNotFoundError:
+            return make_response(f"{name} not found", 404)
+    else:
+        return render_template('index.html')
 
 
 @app.route('/users/<name>/dashboard')
