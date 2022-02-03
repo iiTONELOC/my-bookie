@@ -1,7 +1,10 @@
 import os
-from flask import Flask, request, make_response, render_template, send_from_directory
 from flask_server.src.routes.user_routes import user_login
 from flask_server.src.controllers import api_route_controller
+from flask_server.src.controllers.user_model_controller import get_one_user
+from flask import Flask, request, make_response, render_template, send_from_directory
+
+
 static = 'client/build'
 static = os.path.normpath(static)
 app = Flask(__name__, static_url_path='',
@@ -27,12 +30,18 @@ def react(name):
 
 @app.route('/users/<name>/dashboard')
 def user_dash(name):
-    return render_template('index.html')
+    # look up user in db
+    if get_one_user(_id=name) is not None:
+        return render_template('dashboard.html')
+    else:
+        # FIXME redirect to the not found page
+        return make_response(f"{name} not found", 404)
 
 
 @app.route('/api/<name>', methods=['GET', 'POST'])
 def api(name):
     # add auth to all the api routes?
+
     return api_route_controller(name)
 
 
