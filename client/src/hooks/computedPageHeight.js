@@ -4,7 +4,6 @@ export function computeHeight(element) {
     if (element) {
         const elHeight = element.clientHeight;
         const windowHeight = window.innerHeight;
-        console.log(elHeight, windowHeight);
         return windowHeight - elHeight;
     } else {
         throw new Error('element is not defined');

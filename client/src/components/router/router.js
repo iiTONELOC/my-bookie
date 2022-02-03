@@ -3,9 +3,13 @@ import WithAuthorization from '../../providers/withAuth';
 import { NotFound } from '../notfound';
 
 export default function Router({ path }) {
-    /*Handles front end routing */;
-    if (path.includes('/dashboard')) {
-        return <WithAuthorization><Dashboard /></WithAuthorization>
+    const userDash = path.split('/');
+    if (userDash[3] === 'dashboard') {
+        return (
+            <WithAuthorization>
+                <Dashboard />
+            </WithAuthorization>
+        )
     } else {
         switch (path) {
             case '/':
