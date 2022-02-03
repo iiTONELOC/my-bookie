@@ -32,7 +32,8 @@ def react(name):
 def user_dash(name):
     # look up user in db
     if get_one_user(_id=name) is not None:
-        return render_template('dashboard.html')
+        print(get_one_user(_id=name))
+        return render_template('index.html')
     else:
         # FIXME redirect to the not found page
         return make_response(f"{name} not found", 404)
