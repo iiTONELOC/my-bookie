@@ -1,47 +1,25 @@
-import { FormContainer } from '.'
 import auth from '../../utils/auth';
 import { loginUser } from "../../api";
-import EmailInput from './email_input';
 import { useState, useEffect } from 'react';
-import PasswordInput from './password_input';
-import Checkbox, { getRemembered } from './checkbox';
-import { LockClosedIcon, ExclamationCircleIcon as AlertIcon } from '@heroicons/react/solid'
+import FormContainer from './formContainer';
+import { getRemembered } from './inputs/checkbox';
+import { eventDefaults } from '../../utils/utils';
+import { validateEmail } from '../../utils/validateEmail';
+import { EmailInput, PasswordInput, Checkbox } from './inputs';
+import { LockClosedIcon, ExclamationCircleIcon as AlertIcon } from '@heroicons/react/solid';
+
 
 export function isFormValidated(formState) {
     if (formState) {
-        const fields = document.querySelectorAll('[formdata]');
-        let valid = []
-        console.log(fields)
-        console.log(document.querySelectorAll('[formdata]'))
-        document.querySelectorAll('[formdata]').forEach(field => {
-
-            const val = field?.attributes?.formdata?.value;
-            valid.push(val)
-        });
-
-        [...Object.values(formState)].forEach(value => {
-
-            if (value === null || value.trim() === '') {
-                valid.push(false)
-            } else {
-                valid.push(true)
-            }
-        });
-        let res
-        for (let i = 0; i < valid.length; i++) {
-            const el = valid[i];
-            if (el === false || el === 'false') {
-                res = false
-                break
-            } else {
-                res = true
-            }
-        }
-        return res
-    } else {
-        return false
-    }
-}
+        if (formState.email && formState.password) {
+            const isEmailValid = validateEmail(formState.email);
+            if (isEmailValid) {
+                if (formState.password.length >= 8) return true;
+                else return false;
+            } else return false;
+        } else return false;
+    } else return false;
+};
 
 
 export default function LoginForm() {
@@ -58,31 +36,29 @@ export default function LoginForm() {
     };
 
     const submitFormHandler = async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        eventDefaults(e)
         const user = {
             email: formState.email,
             password: formState.password
         };
-        // check form stats
-
-        const response = await loginUser(user);
-        const data = await response.json();
-        if (response.status === 200) {
-            const { token, ...rest } = data;
-            // set the token in local storage
-            if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
-            return auth.login(token);
-        } else {
-            const { error } = data;
-            if (error) {
-                setErrorMessage(error);
-                setTimeout(() => {
-                    setErrorMessage(null);
-                }, 3500)
-            }
-        }
-
+        if (isFormValidated(formState)) {
+            const response = await loginUser(user);
+            const data = await response.json();
+            if (response.status === 200) {
+                const { token, ...rest } = data;
+                // set the token in local storage
+                if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
+                return auth.login(token);
+            } else {
+                const { error } = data;
+                if (error) {
+                    setErrorMessage(error);
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 3500)
+                };
+            };
+        };
     };
     useEffect(() => {
         if (checked === false) localStorage.removeItem('_remember_me');

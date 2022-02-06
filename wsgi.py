@@ -11,6 +11,8 @@ app = Flask(__name__, static_url_path='',
             static_folder=static,
             template_folder=static,)
 
+# front end routes
+
 
 @app.route('/')
 def index():
@@ -37,6 +39,8 @@ def user_dash(name):
     else:
         # FIXME redirect to the not found page
         return make_response(f"{name} not found", 404)
+
+# api routes
 
 
 @app.route('/api/<name>', methods=['GET', 'POST'])
