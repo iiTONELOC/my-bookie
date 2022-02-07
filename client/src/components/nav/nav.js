@@ -61,7 +61,7 @@ export default function Nav() {
     }
     return (
         <nav navdata='navbar' className="bg-slate-900 w-full flex flex-row justify-between items-center text-gray-200 self-start h-16">
-            <span className=''>
+            <span>
                 <h1 className="ml-3 align-middle text-2xl p-2 hover:text-myLightBlue">
                     <a href='/'><span className="font-medium text-3xl text-myPink">My</span>Bookie</a>
                 </h1>
@@ -70,7 +70,6 @@ export default function Nav() {
                 {navData.map((navItem, index) => {
                     return (
                         <li
-                            className=''
                             key={'Nav: ' + navItem?.name || `${index}`}>
                             <a
                                 onClick={navItem.name === 'Logout' ? (e) => logout(e) : () => { }}

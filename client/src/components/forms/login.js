@@ -46,6 +46,7 @@ export default function LoginForm() {
             const data = await response.json();
             if (response.status === 200) {
                 const { token, ...rest } = data;
+
                 // set the token in local storage
                 if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
                 return auth.login(token);

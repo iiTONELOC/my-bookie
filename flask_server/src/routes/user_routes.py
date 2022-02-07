@@ -123,8 +123,8 @@ def user_login(res, data=None):
             if check_password(user_req['password'], match_user['password']):
                 # generate a token for the user
                 token = Auth.sign_token(
-                    match_user['email'],
                     match_user['username'],
+                    match_user['email'],
                     str(match_user['_id'])
                 )
                 return {
