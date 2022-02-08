@@ -43,9 +43,9 @@ export default function WithAuthorization({ children, ...props }) {
     return (
         <Provider value={value}>
             {isAuthenticated.isAuthenticated ?
-                <div {...props}>
-                    {children}
-                </div>
+
+                children
+
                 /* TODO: CREATE A REDIRECT COMPONENT */
                 : <h1>Please Login</h1>}
         </Provider>

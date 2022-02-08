@@ -34,7 +34,7 @@ export default function DailyHeader() {
         }
     ]
     return (
-        <header className='flex flex-row justify-end w-full h-10 text-gray-300'>
+        <header className='flex flex-row justify-end h-10 text-gray-300'>
             <div className='w-1/2 flex flex-row justify-start items-center p-1'>
                 <h1 className=' text-md md:text-lg lg:text-xl xl:text-2xl'>
                     Welcome, {userData?.isAuthenticated?.user?.username || 'Guest'}!
