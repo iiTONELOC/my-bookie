@@ -62,11 +62,11 @@ export default function Nav() {
     return (
         <nav navdata='navbar' className="bg-slate-900 w-full flex flex-row justify-between items-center text-gray-200 self-start h-16">
             <span>
-                <h1 className="ml-3 align-middle text-2xl p-2 hover:text-myLightBlue">
-                    <a href='/'><span className="font-medium text-3xl text-myPink">My</span>Bookie</a>
+                <h1 className=" ml-1 md:ml-3 align-middle text-lg sm:text-2xl md:text-3xl p-2 hover:text-myLightBlue">
+                    <a href='/'><span className="font-medium  text-myPink">My</span>Bookie</a>
                 </h1>
             </span>
-            <ul className="flex flex-row gap-10 p-2 mx-3">
+            <ul className="flex flex-row gap-5 md:gap-10 p-2 mx-3 ">
                 {navData.map((navItem, index) => {
                     return (
                         <li

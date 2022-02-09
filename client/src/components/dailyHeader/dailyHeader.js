@@ -41,7 +41,7 @@ export default function DailyHeader() {
                 </h1>
             </div>
 
-            <div className='w-1/2 flex flex-row justify-end items-center p-1 gap-3'>
+            <div className='w-full flex flex-row justify-end items-center p-1 gap-3'>
                 {headerIconData.map(({ Icon, text }, index) => {
                     return (
                         <span
