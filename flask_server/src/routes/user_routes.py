@@ -3,8 +3,6 @@ from ..auth.auth import Auth
 from flask import jsonify, request, make_response
 from ..controllers import user_model_controller as mc
 from ..models.user_model import check_password
-# database connection
-m_db = db()
 
 
 def handle_response(data):
@@ -94,6 +92,8 @@ def user_delete(param=None):
 
 def user_login(res, data=None):
     """Login a user. returns a JWT token"""
+    # database connection
+    m_db = db()
     err_msg = res(({'error': {'message': 'Incorrect credentials'}}), 400)
     if data is None:
         return err_msg

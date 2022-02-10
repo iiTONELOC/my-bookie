@@ -7,5 +7,5 @@ class Event(Document):
     start_time = DateTimeField(required=True)
     end_time = DateTimeField(required=True)
     location = StringField(default=None)
-    owner = ReferenceField(required=True)
+    owner = StringField(required=True)
     attendees = ListField(StringField())

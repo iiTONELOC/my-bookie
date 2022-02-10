@@ -33,7 +33,6 @@ class Auth:
                 return req.headers.get('Authorization').split(' ')[1].strip()
             except IndexError as e:
                 return {'error': {'message': f'Invalid token: {e}'}}
-
         else:
             return None
 
