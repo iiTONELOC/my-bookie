@@ -55,8 +55,11 @@ class Auth:
     def is_authorized(req, id):
         """Checks the id of the auth token against the id of the user"""
         token = Auth.get_token(req)
+
         if token is not None:
             decoded = Auth.decode_token(token)
+            print(decoded)
+            print(id)
             if 'Unauthorized' in decoded:
                 return False
             else:

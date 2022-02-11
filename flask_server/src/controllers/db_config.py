@@ -9,7 +9,7 @@ ENV = os.getenv('ENV')
 def get_conn_str():
     """Returns the connection string for the MongoDB database."""
     if ENV != 'production':
-        return f"mongodb://localhost:27017/"
+        return f"mongodb://localhost:27017/bookings"
     else:
         return mongo_uri
 

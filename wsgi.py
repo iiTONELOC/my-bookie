@@ -57,5 +57,10 @@ def api_1(name):
     return api_route_controller('users', name)
 
 
+@app.route('/api/events/<name>',  methods=['GET', 'POST', 'PUT', 'DELETE'])
+def events_api(name):
+    return api_route_controller('events', name)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host='0.0.0.0')

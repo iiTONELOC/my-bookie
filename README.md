@@ -18,7 +18,6 @@ Back End
 - Bcrypt
 - Python Flask Server
 - PyMongo (MongoDB driver for Python)
-- MongoEngine (DOM: Document-Object Mapper)W
 
 ## Installation
 

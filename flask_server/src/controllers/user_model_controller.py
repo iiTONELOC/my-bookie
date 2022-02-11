@@ -1,8 +1,7 @@
 from .db_config import db
-from ..auth.auth import Auth
 from bson.objectid import ObjectId
-from ..utils import validate_email
-from ..models.user_model import User, hash_password
+
+from ..models.user_model import User
 
 m_db = db()
 
@@ -78,47 +77,21 @@ def create_user(data=None):  # (C)reate - create a new user
         user = None
         did_save = None
         try:
-            # Make sure the user doesn't already exist
-            # usernames and emails are unique
             does_exist = check_if_user_exists(data['username'], data['email'])
             if does_exist is False:
-                # check email
-                is_valid_email = validate_email(data['email'])
-                if is_valid_email is False:
-                    return {
-                        'error': {
-                            'message': 'email is not in valid format!'
-                        }
-                    }
-                elif is_valid_email is None:
-                    return {
-                        'error': {
-                            'message': 'email is required!'
-                        }
-                    }
-                elif is_valid_email:
-                    pass
-                # check password length
-                if len(data['password']) < 8:
-                    return {
-                        'error': {
-                            'message': 'passwords must be at least 8 characters!'
-                        }
-                    }
-                else:
-                    # create the user
-                    user = User(
-                        username=data['username'],
-                        email=data['email'],
-                        password=hash_password(data['password']))
-                    # variable to check if the user was saved
-                    did_save = m_db['users'].insert_one(user.to_mongo())
+                user = User(
+                    username=data['username'],
+                    email=data['email'],
+                    password=data['password'])
+                did_save = m_db['users'].insert_one(user.__dict__)
             else:
                 return {'error': {'message': 'User already exists!'}}
         except AttributeError as e:
             return {'error': {'message': f'{e}'}}
         except KeyError as e:
             return {'error': {'message': f'{e} is required!'}}
+        except ValueError as e:
+            return {'error': {'message': f'{e}'}}
         if did_save.inserted_id is None:
             return {'error': {'message': 'Unable to create user'}}
         else:
@@ -141,7 +114,7 @@ def edit_user(data=None):  # (U)update - edit a new user
             # verify the params passed are valid
             if 'email' in body:
                 # validate the email
-                if validate_email(body['email']) is False:
+                if User.validate_email(body['email']) is False:
                     return {
                         'error': {
                             'message': 'email is not in valid format!'
