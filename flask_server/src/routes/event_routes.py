@@ -73,4 +73,14 @@ def event_get(param=None):
 
 
 def event_delete(param=None):
-    return with_auth(event_controller.delete_event(param))
+    token = Auth.decode_token(Auth.get_token(request))
+    if param is not None:
+        if '_id' in token:
+            return with_auth(event_controller.delete_event({
+                '_id': param,
+                'context': ObjectId(token["_id"])
+            }))
+        else:
+            return make_response(jsonify(Auth.unauthorized_msg(None)), 401)
+    else:
+        return make_response(jsonify({'error': 'Please enter an event to delete!'}), 500)

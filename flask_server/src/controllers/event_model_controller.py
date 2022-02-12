@@ -50,7 +50,7 @@ def get_all_events(data=None):  # Get all events
             temp.append(event)
         temp = package_event_data(temp)
         return {'events': temp}
-    elif data:
+    else:
         # get all events for a user
         return get_user_events(data)
 
@@ -150,11 +150,22 @@ def delete_event(param=None):  # Delete an event
         return None
     else:
         try:
-            deleted_entry = _db.remove({'_id': ObjectId(param)})
-            if deleted_entry['n'] > 0:
-                return {'message': f'Event {param} deleted!'}
+            # need to look up the event first and verify that the user is
+            #  the owner of the event
+            event_to_delete = _db.find_one({'_id': ObjectId(param['_id'])})
+            if event_to_delete is not None:
+                if user_auth_for_events(
+                    [event_to_delete],
+                    param['context']
+                ) is not False:
+                    print(event_to_delete)
+                    deleted_entry = _db.remove({'_id': ObjectId(param['_id'])})
+                    if deleted_entry['n'] > 0:
+                        return {'message': f'Event deleted!'}
+                else:
+                    return {'error': {'message': 'You are not authorized to delete this event'}}
             else:
-                return {'error': {'message': f'Event {param} not found!'}}
+                return {'error': {'message': f'Event not found!'}}
         except Exception as e:
-            # print(e)
+            print(e)
             return {'error': {'message': f'{e}'}}
