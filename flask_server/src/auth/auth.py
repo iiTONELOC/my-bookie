@@ -1,6 +1,5 @@
 import os
 import jwt
-from distutils.log import error
 from datetime import datetime, timedelta
 
 
@@ -58,8 +57,6 @@ class Auth:
 
         if token is not None:
             decoded = Auth.decode_token(token)
-            print(decoded)
-            print(id)
             if 'Unauthorized' in decoded:
                 return False
             else:
@@ -67,6 +64,18 @@ class Auth:
                     return True
                 else:
                     return False
+        else:
+            return False
+
+    @staticmethod
+    def is_logged_in(req):
+        token = Auth.get_token(req)
+        if token is not None:
+            decoded = Auth.decode_token(token)
+            if 'Unauthorized' in decoded:
+                return False
+            else:
+                return True
         else:
             return False
 

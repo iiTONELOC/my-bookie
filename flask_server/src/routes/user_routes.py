@@ -1,29 +1,19 @@
-
 from flask import jsonify, request, make_response
-from ..auth.auth import Auth
-from ..controllers.db_config import db
 from ..controllers import user_model_controller as mc
+from ..controllers.db_config import db
+from .helpers import handle_response
 from ..models.user_model import User
-# database connection
-m_db = db()
+from ..auth.auth import Auth
 
 
-def handle_response(data):
-    if data is not None:
-        if 'error' in data:
-            return make_response(jsonify(error=data['error']), 400)
-        elif 'unauthorized' in data:
-            return make_response(jsonify(unauthorized=data['unauthorized']), 401)
-        else:
-            return jsonify(data)
-    else:  # data is None
-        return make_response(jsonify({'message': 'Not Found'}), 404)
+# database connection to user collection
+m_db = db()['users']
 
 
 def user_get(param=None):
     """User get route."""
     if param is None:  # 'api/users'
-        return jsonify(mc.get_all_users())
+        return jsonify({'users': mc.get_all_users()})
     else:  # 'api/users/param'
         # get user by _id
         if Auth.is_authorized(request, param):
@@ -52,7 +42,7 @@ def user_post():
         except KeyError:
             return make_response(jsonify(data), 400)
         except Exception as e:
-            print(e)
+            # print(e)
             return make_response(jsonify({'error': e}), 500)
     else:
         return handle_response(data)
@@ -113,13 +103,14 @@ def user_login(res, data=None):
         # variable to hold found user
         match_user = None
         if 'username' in user_req:
-            match_user = m_db['users'].find_one(
+            match_user = m_db.find_one(
                 {'username': user_req['username']})
         if 'email' in user_req:
-            match_user = m_db['users'].find_one(
+            match_user = m_db.find_one(
                 {'email': user_req['email']})
         # if match
         if match_user is not None:
+
             # user found now check password
             if User.check_password(user_req['password'], match_user['password']):
                 # generate a token for the user

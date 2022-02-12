@@ -1,21 +1,22 @@
 import bcrypt
-from .validators import Validate
+from .validators import Validate as val
 
 
 class User:
-    def __init__(self, email, username, password):
-        self.email = Validate.email(email)
-        self.username = Validate.string(username, 5, 'Username')
+    def __init__(self, email, username, password) -> None:
+        self.username = val.string(username, 5, 'Username')
+        self.email = val.email(email)
         self.password = User.hash_password(
-            Validate.string(password, 8, 'Password'))
+            val.string(password, 8, 'Password'))
 
     @staticmethod
-    def hash_password(password):
+    def hash_password(password) -> None or str:
         if 'validation_error' not in password:
-            password = password.encode("utf-8")
-            return bcrypt.hashpw(password, bcrypt.gensalt())
+            return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        else:
+            return None
 
     @staticmethod
-    def check_password(password, hashed_password):
+    def check_password(password, hashed_password) -> bool:
         password = password.encode('utf-8')
-        return bcrypt.checkpw(password, hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(password, hashed_password)

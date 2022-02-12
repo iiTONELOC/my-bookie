@@ -1,5 +1,6 @@
 from flask import jsonify, make_response, request
 from ..routes import user_routes, event_routes
+from ..auth.auth import Auth
 
 
 def api_controller(name, param=None):
@@ -11,10 +12,10 @@ def api_controller(name, param=None):
             'DELETE': lambda: user_routes.user_delete(param)
         },
         'events': {
-            'POST': lambda: event_routes.event_post(),
-            'PUT': lambda: event_routes.event_put(param),
-            'GET': lambda: event_routes.event_get(param),
-            'DELETE': lambda: event_routes.event_delete(param)
+            'POST': lambda:  event_routes.event_post(),
+            'PUT': lambda:  event_routes.event_put(param),
+            'GET': lambda:  event_routes.event_get(param),
+            'DELETE': lambda:  event_routes.event_delete(param)
         },
     }
 

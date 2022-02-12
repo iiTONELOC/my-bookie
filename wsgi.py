@@ -2,7 +2,7 @@ import os
 from flask_server.src.routes.user_routes import user_login
 from flask_server.src.controllers import api_route_controller
 from flask_server.src.controllers.user_model_controller import get_one_user
-from flask import Flask, request, make_response, render_template, send_from_directory
+from flask import Flask, request, make_response, render_template, send_from_directory, jsonify
 
 
 static = 'client/build'
@@ -34,7 +34,6 @@ def react(name):
 def user_dash(name):
     # look up user in db
     if get_one_user(_id=name) is not None:
-        print(get_one_user(_id=name))
         return render_template('index.html')
     else:
         # FIXME redirect to the not found page
@@ -46,7 +45,6 @@ def user_dash(name):
 @app.route('/api/<name>', methods=['GET', 'POST'])
 def api(name):
     # add auth to all the api routes?
-
     return api_route_controller(name)
 
 

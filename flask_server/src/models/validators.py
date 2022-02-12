@@ -25,12 +25,6 @@ class Validate:
                     f"{field_name}'s must be between {length} and {max_length} characters long.")
             else:
                 return string
-        else:
-            if len(str(string)) < length:
-                raise ValueError(
-                    f"{field_name}'s must be at least {length} characters long.")
-            else:
-                return string
 
     @staticmethod
     def date_time(date_time):
