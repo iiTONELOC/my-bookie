@@ -10,11 +10,10 @@
 
 # production
 
-/build
+build/
 /package-lock.json
 /package.json
-README.md
-tailwind.config.js
+
 # misc
 .DS_Store
 .env.local
