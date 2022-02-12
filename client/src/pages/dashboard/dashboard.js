@@ -6,8 +6,8 @@ import { DailyHeader } from "../../components/dailyHeader";
 
 
 export default function Dashboard() {
-    // const data = useAuthContext();
-    // console.log('HERE IS THE AUTH CONTEXT', data);
+    const data = useAuthContext();
+    console.log('HERE IS THE AUTH CONTEXT', data);
 
     return (
         <div

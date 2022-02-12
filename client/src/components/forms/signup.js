@@ -1,14 +1,14 @@
 import { useState, } from 'react';
 import auth from '../../utils/auth';
-import { isFormValidated } from './login';
-import { createNewUser } from "../../api";
+import { API } from "../../utils/api";
+import isFormValidated from './helpers';
 import FormContainer from './formContainer';
 import { eventDefaults } from '../../utils/utils';
 import { getRemembered } from './inputs/checkbox';
 import { PasswordInput, EmailInput, UsernameInput } from './inputs';
 import { PlusCircleIcon, ExclamationCircleIcon as AlertIcon } from "@heroicons/react/solid";
 
-
+const { createNewUser } = API.UserController;
 export default function SignUpForm() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [formState, setFormState] = useState(getRemembered() !== !null ? { email: null, username: null, password: null }

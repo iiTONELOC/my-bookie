@@ -1,32 +1,21 @@
 import auth from '../../utils/auth';
-import { loginUser } from "../../api";
+import { API } from "../../utils/api";
+import isFormValidated from './helpers';
 import { useState, useEffect } from 'react';
 import FormContainer from './formContainer';
 import { getRemembered } from './inputs/checkbox';
 import { eventDefaults } from '../../utils/utils';
-import { validateEmail } from '../../utils/validateEmail';
 import { EmailInput, PasswordInput, Checkbox } from './inputs';
 import { LockClosedIcon, ExclamationCircleIcon as AlertIcon } from '@heroicons/react/solid';
 
-
-export function isFormValidated(formState) {
-    if (formState) {
-        if (formState.email && formState.password) {
-            const isEmailValid = validateEmail(formState.email);
-            if (isEmailValid) {
-                if (formState.password.length >= 8) return true;
-                else return false;
-            } else return false;
-        } else return false;
-    } else return false;
-};
-
+const { loginUser } = API.UserController;
 
 export default function LoginForm() {
-    const [checked, setChecked] = useState(localStorage.getItem('_remember_me') ? true : false)
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [checked, setChecked] = useState(localStorage.getItem('_remember_me') ? true : false);
     const [formState, setFormState] = useState(getRemembered() === null ? { email: null, password: null }
-        : getRemembered())
+        : getRemembered());
+    const [errorMessage, setErrorMessage] = useState(null);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormState({
@@ -46,7 +35,6 @@ export default function LoginForm() {
             const data = await response.json();
             if (response.status === 200) {
                 const { token, ...rest } = data;
-
                 // set the token in local storage
                 if (checked) localStorage.setItem(`_remember_me`, JSON.stringify(rest));
                 return auth.login(token);
