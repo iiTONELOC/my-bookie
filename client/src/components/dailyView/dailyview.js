@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import helpers from './utils';
-
+import ScrollIntoView from '../../hooks/scrollIntoView';
 const {
     hours,
     handleFuture,
     handleCurrent,
-    scrollIntoView,
     handleCurrentPast,
 } = helpers
 
@@ -13,18 +12,18 @@ const {
 export default function DailyView(date) {
     const [isMounted, setIsMounted] = useState(false);
     const [currentHour, setCurrentHour] = useState(new Date().getHours());
-
+    ScrollIntoView();
     useEffect(() => {
         setIsMounted(true);
         return () => {
             setIsMounted(false);
-            window.removeEventListener('resize', () => scrollIntoView())
+            // window.removeEventListener('resize', () => scrollIntoView())
         };
     }, []);
     useEffect(() => {
-        scrollIntoView();
+        // scrollIntoView();
         if (isMounted) {
-            window.addEventListener('resize', () => scrollIntoView());
+            // window.addEventListener('resize', () => scrollIntoView());
             handleCurrent(currentHour, setCurrentHour);
         }
         // eslint-disable-next-line

@@ -19,14 +19,7 @@ function hours() {
     return hours;
 };
 
-function scrollIntoView() {
-    try {
-        const current = document.querySelector('.current-hour')
-        current.scrollIntoView({ behavior: 'smooth' });
-    } catch (error) {
-        return
-    }
-};
+
 
 function handleCurrentPast(hour, currentHour) {
     return hour === currentHour ? currentHourClass :
@@ -49,7 +42,6 @@ function handleCurrent(currentHour, setCurrentHour) {
 const helpers = {
     hours,
     formatTime,
-    scrollIntoView,
     handleCurrentPast,
     handleFuture,
     handleCurrent,

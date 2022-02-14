@@ -1,5 +1,5 @@
 import { Home, Login, SignUp, Dashboard } from '../../pages';
-import WithAuthorization from '../../providers/withAuth';
+import { WithAuthorization, DatabaseProvider } from '../../providers';
 import { NotFound } from '../notfound';
 
 export default function Router({ path }) {
@@ -7,7 +7,9 @@ export default function Router({ path }) {
     if (userDash[3] === 'dashboard') {
         return (
             <WithAuthorization>
-                <Dashboard />
+                <DatabaseProvider>
+                    <Dashboard />
+                </DatabaseProvider>
             </WithAuthorization>
         )
     } else {

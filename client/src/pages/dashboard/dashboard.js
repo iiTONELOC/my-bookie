@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ComputedPageHeight } from "../../hooks";
 import { DailyView } from "../../components/dailyView";
-import { useAuthContext } from "../../providers/withAuth";
+import { useDatabaseContext } from '../../providers';
 import { DailyHeader } from "../../components/dailyHeader";
 
 // the dashboard's default is the daily view
@@ -15,7 +15,7 @@ import { DailyHeader } from "../../components/dailyHeader";
 export default function Dashboard() {
     const [pageHeight] = useState(ComputedPageHeight());
     const [isMounted, setMounted] = useState(false);
-    const data = useAuthContext();
+    const [state, dispatch] = useDatabaseContext();
 
     useEffect(() => {
         setMounted(true);
@@ -25,7 +25,9 @@ export default function Dashboard() {
     useEffect(() => {
         if (isMounted === true) {
             console.log('mounted')
-            console.log('HERE IS THE AUTH CONTEXT', data);
+            console.log('HERE IS THE AUTH CONTEXT', state);
+            // now the dash is mounted we can update the current time
+            // and fetch all events for the current month
 
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
