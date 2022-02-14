@@ -35,8 +35,10 @@ def event_get(param=None):
     #  a context parameter is provided to the controller
     #  to ensure that the user can only see their own events
     token = Auth.decode_token(Auth.get_token(request))
+
     # gets the event by id
     if param is not None:
+        print('YOU SHOULDNT SEE THIS')
         return with_auth(event_controller.get_one_event({
             '_id': param,
             'context': ObjectId(token["_id"])
@@ -45,8 +47,7 @@ def event_get(param=None):
         # no param was provided ie 'api/events/eventId'
         # look for a request
         try:
-
-            if request.json is not None:
+            try:
                 have_request = len(request.json) > 0
                 if have_request:
                     if '_id' in token:
@@ -57,14 +58,21 @@ def event_get(param=None):
                         return with_auth(event_controller.get_all_events(data))
                     else:
                         return make_response(jsonify(Auth.unauthorized_msg(None)), 401)
-            else:
-                # if none was provided only return the users events
+            except Exception as e:
+                # need to look for the query param in the header
+                # body is not support on get requests
                 if '_id' in token:
                     data = {
                         'query': {'owner_id': ObjectId(token["_id"])},
                         'context': ObjectId(token["_id"])
                     }
-                    return with_auth(event_controller.get_all_events(data))
+                    query = request.headers.get('query')
+                    if(query):
+                        data['query'] = {query.split(
+                            ' ')[0]: query.split(' ')[1]}
+                        return with_auth(event_controller.get_all_events(data))
+                    else:
+                        return with_auth(event_controller.get_all_events(data))
                 else:
                     return make_response(jsonify(Auth.unauthorized_msg(None)), 401)
         except AttributeError as e:

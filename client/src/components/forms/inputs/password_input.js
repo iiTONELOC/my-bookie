@@ -25,7 +25,7 @@ export default function PasswordInput({
     return (
         <div className='relative'>
             {error !== null && (
-                <div class="absolute bottom-0 right-0 z-40 mb-1 mr-1">
+                <div className="absolute bottom-0 right-0 z-40 mb-1 mr-1">
                     <p className='text-red-500 '>{error}</p>
                 </div>
             )}

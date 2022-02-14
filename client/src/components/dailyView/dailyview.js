@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import helpers from './utils';
 import ScrollIntoView from '../../hooks/scrollIntoView';
 const {
@@ -35,10 +35,10 @@ export default function DailyView(date) {
             <div className="flex flex-col w-full h-full rounded-lg gap-3 p-3  overflow-y-auto">
                 {hours().map((hour, index) => {
                     return (
-                        <>
+                        <Fragment key={index}>
                             {/* Individual hour container */}
                             <div
-                                key={index}
+
                                 datahour={index}
                                 className={`flex flex-row w-full h-24 rounded-lg 
                                 ${handleCurrentPast(index, currentHour)} ${hour.event ?
@@ -58,7 +58,7 @@ export default function DailyView(date) {
                                     </div>
                                 </div>
                             </div>
-                        </>
+                        </Fragment>
                     )
                 })}
             </div>

@@ -41,6 +41,7 @@ def create_event(data=None):  # Create an event
 
 
 def get_all_events(data=None):  # Get all events
+
     if data is None:
         temp = []
         events = _db.find()
@@ -66,6 +67,7 @@ def get_user_events(data):  # Gets all events for a user based on a query
         'owner_name',
         'description',
     )
+
     if data is not None:
         q = data['query']
         query = None

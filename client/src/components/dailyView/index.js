@@ -1,1 +1,1 @@
-export { default as DailyView } from './dailyView';
+export { default as DailyView } from './dailyview';

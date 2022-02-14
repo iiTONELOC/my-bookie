@@ -37,4 +37,4 @@ export const DatabaseProvider = ({ value = [], ...props }) => {
 
 export const useDatabaseContext = () => {
     return useContext(DatabaseContext);
-}
+};

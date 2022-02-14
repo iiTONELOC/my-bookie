@@ -1,44 +1,41 @@
 import { useState, useEffect } from 'react';
-import { CalendarIcon, ClockIcon } from '@heroicons/react/outline'
-import { useAuthContext } from '../../providers/withAuth'
+import { useDatabaseContext } from '../../providers';
+import { CalendarIcon, ClockIcon } from '@heroicons/react/outline';
+
 export default function DailyHeader() {
-    const userData = useAuthContext();
-    const [time, setTime] = useState(Date.now());
-    const [mounted, setMounted] = useState(false);
-    const timerUpdater = () => {
-        setTime(Date.now())
-    };
+    const [isMounted, setMounted] = useState(false);
+    const [state, dispatch] = useDatabaseContext();
+
     useEffect(() => {
-        if (!mounted) setMounted(true);
-        return () => { setMounted(false); clearInterval(timerUpdater) };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setMounted(true);
+        return () => setMounted(false)
     }, []);
-    useEffect(() => {
-        if (mounted) {
-            setTime(Date.now())
-            setInterval(timerUpdater, 10000);
-        }
-    }, [mounted])
 
     const headerIconData = [
         {
             Icon: CalendarIcon,
-            text: `${new Intl.DateTimeFormat('en-US')
-                .format(Date.now())}`
+            text: `${state.date}`
         },
         {
             Icon: ClockIcon,
-            text: `${new Intl.DateTimeFormat('en-US',
-                { timeStyle: 'short' })
-                .format(time)}`
+            text: `${state.time}`
         }
-    ]
-    return (
-        mounted && (
+    ];
+
+    setInterval(() => {
+        dispatch({
+            type: 'SET_TIME',
+            payload: new Intl.DateTimeFormat('en-US', { timeStyle: 'short' })
+                .format(Date.now())
+        });
+    }, 10000)
+
+    return !isMounted ? null :
+        (isMounted && (
             <header className='flex flex-row justify-end h-10 text-gray-300'>
                 <div className='w-1/2 flex flex-row justify-start items-center p-1'>
                     <h1 className=' text-md md:text-lg lg:text-xl xl:text-2xl'>
-                        Welcome, {userData?.isAuthenticated?.user?.username || 'Guest'}!
+                        Welcome, {state.user.username || 'Guest'}!
                     </h1>
                 </div>
                 <div className='w-full flex flex-row justify-end items-center p-1 gap-3'>
@@ -53,6 +50,5 @@ export default function DailyHeader() {
                         )
                     })}
                 </div>
-            </header>)
-    )
-}
+            </header>));
+};
