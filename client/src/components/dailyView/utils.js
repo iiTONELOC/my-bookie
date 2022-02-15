@@ -38,10 +38,37 @@ function handleCurrent(currentHour, setCurrentHour) {
     }, 5000)
 };
 
+function dailyUserData({
+    state,
+    hourData,
+    setEvents,
+    setHourData,
+    getUserEventsByDay,
+}) {
+
+    const dailyEvents = getUserEventsByDay(
+        state.events,
+        state.date.split('/')[1]
+    );
+    dailyEvents.forEach(event => {
+        const eventHour = new Date(event.start_time).getHours();
+        setHourData(prevState => {
+            const newState = [...prevState];
+            Array.isArray(newState[eventHour].events) ?
+                newState[eventHour].event.push(event) :
+                newState[eventHour].event = [event];
+            return newState;
+        });
+    });
+    setEvents([...hourData]);
+
+}
+
 
 const helpers = {
     hours,
     formatTime,
+    dailyUserData,
     handleCurrentPast,
     handleFuture,
     handleCurrent,

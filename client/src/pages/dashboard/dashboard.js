@@ -45,7 +45,7 @@ export default function Dashboard() {
                             </div>
                         )}
                         <div className=" flex flex-col p-2 md:p-0 overflow-hidden w-full h-full mt-2 mb-6 gap-5">
-                            <DailyHeader {...state} />
+                            <DailyHeader />
                             {state?.viewSelection === 'daily' && <DailyView />}
                         </div>
                     </div>

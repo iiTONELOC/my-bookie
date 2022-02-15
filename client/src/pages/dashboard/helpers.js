@@ -25,3 +25,9 @@ export async function getUserEvents(getEventsByMonth, dispatch) {
         }, [60000]);
     };
 };
+
+export function getUserEventsByDay(events, day) {
+    return events.filter(event => {
+        return event.day === day
+    })
+}

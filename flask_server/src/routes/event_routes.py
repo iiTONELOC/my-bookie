@@ -19,7 +19,9 @@ def event_post():
         # try to create a new event
         d = {**request.json,
              'owner_id': ObjectId(token["_id"])}
-    return with_auth(event_controller.create_event(d))
+        return with_auth(event_controller.create_event(d))
+    else:
+        return make_response(token, 401)
 
 
 def event_put(param=None):
