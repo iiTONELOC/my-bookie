@@ -2,7 +2,8 @@
 
 ## Coming Soon...
 
-# Screenshot
+# Screenshot  
+
 ![MyBookie](./assets/images/screenshot.png)
 
 **MyBookie** is an appointment setter Full Stack Web Application Featuring:
